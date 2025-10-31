@@ -141,6 +141,7 @@ export class FigmaAPIClient {
         return response;
       },
       async (error: AxiosError) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.handleError(error);
       }
     );
@@ -295,7 +296,6 @@ export class FigmaAPIClient {
 
     try {
       const response = await this.client.request(config);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return response.data;
     } catch (retryError) {
       if (axios.isAxiosError(retryError)) {
