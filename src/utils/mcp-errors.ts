@@ -87,13 +87,13 @@ export function formatMCPError(error: unknown, toolName: string): string {
  * @returns MCP-formatted error response
  */
 export function createErrorResponse(error: unknown, toolName: string): {
-  content: Array<{ type: string; text: string }>;
+  content: Array<{ type: 'text'; text: string }>;
   isError: true;
 } {
   return {
     content: [
       {
-        type: 'text',
+        type: 'text' as const,
         text: formatMCPError(error, toolName),
       },
     ],

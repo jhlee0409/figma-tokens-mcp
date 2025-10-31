@@ -153,12 +153,15 @@ export interface ToolContext {
 }
 
 /**
- * Standard tool response structure
+ * Standard tool response structure (matches MCP SDK's CallToolResult)
  */
 export interface ToolResponse {
   content: Array<{
-    type: string;
-    text: string;
+    type: 'text' | 'image' | 'resource';
+    text?: string;
+    data?: string;
+    mimeType?: string;
   }>;
   isError?: boolean;
+  _meta?: Record<string, unknown>;
 }

@@ -593,11 +593,11 @@ function Example() {
 /**
  * Formats tool output as MCP response
  */
-export function formatToolResponse(output: unknown): ToolResponse {
+export function formatToolResponse(output: unknown): { content: Array<{ type: 'text'; text: string }> } {
   return {
     content: [
       {
-        type: 'text',
+        type: 'text' as const,
         text: JSON.stringify(output, null, 2),
       },
     ],

@@ -11,6 +11,8 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
   Tool,
+  CallToolResult,
+  TextContent,
 } from '@modelcontextprotocol/sdk/types.js';
 import type {
   ServerConfig,
@@ -221,7 +223,7 @@ export function createServer(config: ServerConfig = {}): Server {
           return {
             content: [
               {
-                type: 'text',
+                type: 'text' as const,
                 text: JSON.stringify(result, null, 2),
               },
             ],
@@ -254,7 +256,7 @@ export function createServer(config: ServerConfig = {}): Server {
           return {
             content: [
               {
-                type: 'text',
+                type: 'text' as const,
                 text: JSON.stringify(info, null, 2),
               },
             ],
