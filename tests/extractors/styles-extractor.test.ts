@@ -10,15 +10,14 @@ import type {
   FileNodesResponse,
   VectorNode,
   TextNode,
-  Paint,
   TypeStyle,
-  RGBA,
 } from '@/core/extractors/types';
 
 // Mock the FigmaAPIClient
 vi.mock('@/core/extractors/figma-api');
 
 describe('StylesExtractor', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockClient: any;
   let extractor: StylesExtractor;
 
@@ -366,6 +365,7 @@ describe('StylesExtractor', () => {
         name: 'Test',
         nodes: {
           '1:1': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             document: null as any, // Deleted node
           },
         },
@@ -842,27 +842,25 @@ describe('StylesExtractor', () => {
       ];
 
       mockClient.getFileStyles.mockResolvedValue(mockStyles);
-      mockClient.getFileNodes
-        .mockRejectedValueOnce(new Error('API error'))
-        .mockResolvedValueOnce({
-          name: 'Test',
-          nodes: {
-            '1:2': {
-              document: {
-                id: '1:2',
-                name: 'Color',
-                type: 'RECTANGLE',
-                fills: [{ type: 'SOLID', color: { r: 0, g: 1, b: 0, a: 1 } }],
-              } as VectorNode,
-            },
+      mockClient.getFileNodes.mockRejectedValueOnce(new Error('API error')).mockResolvedValueOnce({
+        name: 'Test',
+        nodes: {
+          '1:2': {
+            document: {
+              id: '1:2',
+              name: 'Color',
+              type: 'RECTANGLE',
+              fills: [{ type: 'SOLID', color: { r: 0, g: 1, b: 0, a: 1 } }],
+            } as VectorNode,
           },
-        });
+        },
+      });
 
       const result = await extractor.extractStyles('test');
 
       // Should have successfully extracted the second color
       expect(Object.keys(result.colors)).toHaveLength(1);
-      expect(result.colors['color2']).toBeDefined();
+      expect(result.colors['color-2']).toBeDefined();
     });
   });
 
@@ -873,6 +871,7 @@ describe('StylesExtractor', () => {
   describe('extractStylesFromFile', () => {
     it('should create client and extractor internally', async () => {
       // Mock FigmaAPIClient constructor
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const MockedClient = FigmaAPIClient as any;
       MockedClient.mockImplementation(() => ({
         getFileStyles: vi.fn().mockResolvedValue([]),

@@ -3,7 +3,15 @@
  * Detects naming patterns in strings and normalizes them to a consistent format
  */
 
-export type NamingPattern = 'kebab-case' | 'camelCase' | 'PascalCase' | 'snake_case' | 'SCREAMING_SNAKE_CASE' | 'slash/case' | 'dot.case' | 'mixed';
+export type NamingPattern =
+  | 'kebab-case'
+  | 'camelCase'
+  | 'PascalCase'
+  | 'snake_case'
+  | 'SCREAMING_SNAKE_CASE'
+  | 'slash/case'
+  | 'dot.case'
+  | 'mixed';
 
 export interface PatternDetectionResult {
   pattern: NamingPattern;
@@ -21,13 +29,13 @@ export function detectNamingPattern(names: string[]): PatternDetectionResult {
 
   const patterns: Record<NamingPattern, number> = {
     'kebab-case': 0,
-    'camelCase': 0,
-    'PascalCase': 0,
-    'snake_case': 0,
-    'SCREAMING_SNAKE_CASE': 0,
+    camelCase: 0,
+    PascalCase: 0,
+    snake_case: 0,
+    SCREAMING_SNAKE_CASE: 0,
     'slash/case': 0,
     'dot.case': 0,
-    'mixed': 0,
+    mixed: 0,
   };
 
   for (const name of names) {
@@ -47,7 +55,7 @@ export function detectNamingPattern(names: string[]): PatternDetectionResult {
   }
 
   const confidence = maxCount / names.length;
-  const samples = names.filter(name => detectSinglePattern(name) === dominantPattern).slice(0, 3);
+  const samples = names.filter((name) => detectSinglePattern(name) === dominantPattern).slice(0, 3);
 
   return { pattern: dominantPattern, confidence, samples };
 }
@@ -102,11 +110,15 @@ export function normalizeToKebabCase(name: string): string {
   // First, handle common separators
   let normalized = name
     // Replace slashes, dots, and underscores with spaces
-    .replace(/[\/\._]/g, ' ')
+    .replace(/[/._]/g, ' ')
+    // Replace special characters with spaces (before other transformations)
+    .replace(/[^a-zA-Z0-9\s-]/g, ' ')
     // Insert space before uppercase letters in camelCase/PascalCase
     .replace(/([a-z])([A-Z])/g, '$1 $2')
-    // Insert space before numbers
+    // Insert space before numbers (letter to number)
     .replace(/([a-zA-Z])(\d)/g, '$1 $2')
+    // Insert space after numbers (number to letter)
+    .replace(/(\d)([a-zA-Z])/g, '$1 $2')
     // Multiple spaces to single space
     .replace(/\s+/g, ' ')
     // Trim
@@ -115,8 +127,6 @@ export function normalizeToKebabCase(name: string): string {
     .toLowerCase()
     // Replace spaces with hyphens
     .replace(/\s+/g, '-')
-    // Remove any remaining non-alphanumeric characters except hyphens
-    .replace(/[^a-z0-9-]/g, '')
     // Remove multiple consecutive hyphens
     .replace(/-+/g, '-')
     // Remove leading/trailing hyphens
@@ -135,9 +145,13 @@ export function normalizeToCamelCase(name: string): string {
   if (parts.length === 0) return '';
 
   // First part stays lowercase, rest are capitalized
-  return parts[0] + parts.slice(1).map(part =>
-    part.charAt(0).toUpperCase() + part.slice(1)
-  ).join('');
+  return (
+    parts[0] +
+    parts
+      .slice(1)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join('')
+  );
 }
 
 /**

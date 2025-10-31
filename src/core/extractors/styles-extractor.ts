@@ -12,16 +12,7 @@
  */
 
 import { FigmaAPIClient } from './figma-api';
-import type {
-  Style,
-  Paint,
-  TypeStyle,
-  RGBA,
-  ColorStop,
-  Node,
-  VectorNode,
-  TextNode,
-} from './types';
+import type { Style, Paint, TypeStyle, RGBA, ColorStop, Node, VectorNode, TextNode } from './types';
 import { Logger, LogLevel } from '@/utils/logger';
 import { detectNamingPattern, normalizeToKebabCase } from '@/utils/pattern-detector';
 
@@ -134,23 +125,33 @@ export class StylesExtractor {
       this.logger.info(`Found ${styles.length} total styles`);
 
       // Filter for FILL and TEXT styles only
-      const fillStyles = styles.filter(s => s.styleType === 'FILL');
-      const textStyles = styles.filter(s => s.styleType === 'TEXT');
+      const fillStyles = styles.filter((s) => s.styleType === 'FILL');
+      const textStyles = styles.filter((s) => s.styleType === 'TEXT');
 
-      this.logger.info(`Filtered to ${fillStyles.length} color styles and ${textStyles.length} text styles`);
+      this.logger.info(
+        `Filtered to ${fillStyles.length} color styles and ${textStyles.length} text styles`
+      );
 
       // Step 2: Fetch nodes for styles (in batches)
       const stylesWithNodes = await this.fetchStyleNodes(fileKey, [...fillStyles, ...textStyles]);
 
       // Step 3: Extract color tokens
-      const colors = this.extractColorTokens(stylesWithNodes.filter(s => s.style.styleType === 'FILL'));
+      const colors = this.extractColorTokens(
+        stylesWithNodes.filter((s) => s.style.styleType === 'FILL')
+      );
 
       // Step 4: Extract typography tokens
-      const typography = this.extractTypographyTokens(stylesWithNodes.filter(s => s.style.styleType === 'TEXT'));
+      const typography = this.extractTypographyTokens(
+        stylesWithNodes.filter((s) => s.style.styleType === 'TEXT')
+      );
 
       // Step 5: Calculate metadata
-      const skippedStyles = fillStyles.length + textStyles.length - Object.keys(colors).length - Object.keys(typography).length;
-      const allNames = [...fillStyles, ...textStyles].map(s => s.name);
+      const skippedStyles =
+        fillStyles.length +
+        textStyles.length -
+        Object.keys(colors).length -
+        Object.keys(typography).length;
+      const allNames = [...fillStyles, ...textStyles].map((s) => s.name);
       const namingPattern = detectNamingPattern(allNames).pattern;
 
       const result: ExtractedStyles = {
@@ -165,7 +166,9 @@ export class StylesExtractor {
         },
       };
 
-      this.logger.info(`Extraction complete: ${Object.keys(colors).length} colors, ${Object.keys(typography).length} typography tokens`);
+      this.logger.info(
+        `Extraction complete: ${Object.keys(colors).length} colors, ${Object.keys(typography).length} typography tokens`
+      );
 
       return result;
     } catch (error) {
@@ -290,7 +293,7 @@ export class StylesExtractor {
     }
 
     // Get the first visible fill
-    const fill = fills.find(f => f.visible !== false);
+    const fill = fills.find((f) => f.visible !== false);
     if (!fill) {
       return null;
     }
@@ -372,7 +375,9 @@ export class StylesExtractor {
   /**
    * Step 4: Extract typography tokens from TEXT styles
    */
-  private extractTypographyTokens(stylesWithNodes: StyleWithNode[]): Record<string, TypographyToken> {
+  private extractTypographyTokens(
+    stylesWithNodes: StyleWithNode[]
+  ): Record<string, TypographyToken> {
     const tokens: Record<string, TypographyToken> = {};
 
     for (const { style, node } of stylesWithNodes) {

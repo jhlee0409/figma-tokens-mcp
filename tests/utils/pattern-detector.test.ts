@@ -95,7 +95,7 @@ describe('Pattern Detector', () => {
       const result = detectNamingPattern(names);
 
       expect(result.samples).toHaveLength(3); // Max 3 samples
-      expect(result.samples.every(s => s.includes('-'))).toBe(true);
+      expect(result.samples.every((s) => s.includes('-'))).toBe(true);
     });
   });
 
