@@ -5,6 +5,14 @@
 export { FigmaAPIClient } from './figma-api';
 export type { FigmaAPIClientConfig } from './figma-api';
 
+export { StylesExtractor, extractStylesFromFile } from './styles-extractor';
+export type {
+  StylesExtractorConfig,
+  ColorToken,
+  TypographyToken,
+  ExtractedStyles,
+} from './styles-extractor';
+
 export {
   FigmaAPIError,
   FigmaAuthError,
