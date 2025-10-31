@@ -188,7 +188,8 @@ export class FigmaAPIClient {
   /**
    * Handles API errors and converts them to custom error types
    */
-  private async handleError(error: AxiosError): Promise<never> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private async handleError(error: AxiosError): Promise<any> {
     if (error.response) {
       const status = error.response.status;
       const data = error.response.data as { status?: number; err?: string; message?: string };
@@ -300,7 +301,8 @@ export class FigmaAPIClient {
       const response = await this.client.request(cleanConfig);
       // Update retry count for potential future retries
       (response.config as typeof configWithRetry).retryCount = newRetryCount;
-      return response.data as unknown;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return response.data;
     } catch (retryError) {
       if (axios.isAxiosError(retryError)) {
         // Pass the retry count to the error config
