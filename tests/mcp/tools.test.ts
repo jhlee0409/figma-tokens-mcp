@@ -18,7 +18,7 @@ import {
   getAvailableTokenTypes,
 } from '../../src/utils/token-validator';
 import { parseFigmaUrl, isValidFileKey } from '../../src/utils/url-parser';
-import { FigmaAPIError } from '../../src/core/extractors/errors';
+import { FigmaInvalidUrlError, FigmaAPIError } from '../../src/core/extractors/errors';
 
 // Mock the extractors and converters
 vi.mock('../../src/core/extractors/figma-api');
@@ -311,9 +311,11 @@ describe('MCP Tools', () => {
     });
 
     it('should reject invalid URLs', () => {
-      expect(() => parseFigmaUrl('not-a-url')).toThrow();
-      expect(() => parseFigmaUrl('https://example.com')).toThrow();
-      expect(() => parseFigmaUrl('https://www.figma.com/invalid/path')).toThrow();
+      expect(() => parseFigmaUrl('not-a-url')).toThrow(FigmaInvalidUrlError);
+      expect(() => parseFigmaUrl('https://example.com')).toThrow(FigmaInvalidUrlError);
+      expect(() => parseFigmaUrl('https://www.figma.com/invalid/path')).toThrow(
+        FigmaInvalidUrlError
+      );
     });
 
     it('should validate file keys', () => {

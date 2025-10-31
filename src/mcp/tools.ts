@@ -80,11 +80,11 @@ export async function extractTokens(
   });
 
   // Determine extraction strategy
-  let actualStrategy = extractionStrategy;
-  if (actualStrategy === 'auto') {
+  let actualStrategy: 'variables' | 'styles' | 'mixed' =
+    extractionStrategy === 'auto' ? 'mixed' : extractionStrategy;
+  if (extractionStrategy === 'auto') {
     // For MVP, we'll use 'mixed' as default auto strategy
     // In future, we could detect based on file metadata
-    actualStrategy = 'mixed';
     context.logger.info('Auto-detecting extraction strategy: using mixed mode');
   }
 
@@ -217,6 +217,7 @@ export async function extractTokens(
         },
       };
     } else {
+      // This should never happen due to type constraints, but keeping for runtime safety
       throw new MCPToolError(
         `Invalid extraction strategy: ${actualStrategy as string}`,
         'extract_tokens',
