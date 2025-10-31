@@ -277,7 +277,6 @@ export class FigmaAPIClient {
   /**
    * Retries a failed request with exponential backoff
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async retryRequest(error: AxiosError): Promise<unknown> {
     if (!error.config) {
       throw error;
@@ -301,7 +300,6 @@ export class FigmaAPIClient {
       const response = await this.client.request(cleanConfig);
       // Update retry count for potential future retries
       (response.config as typeof configWithRetry).retryCount = newRetryCount;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return response.data;
     } catch (retryError) {
       if (axios.isAxiosError(retryError)) {
