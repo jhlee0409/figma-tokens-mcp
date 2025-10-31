@@ -193,19 +193,19 @@ export function createServer(config: ServerConfig = {}): Server {
     try {
       switch (name) {
         case 'extract_tokens': {
-          const input = args as ExtractTokensInput;
+          const input = args as unknown as ExtractTokensInput;
           const result = await extractTokens(input, toolContext);
           return formatToolResponse(result);
         }
 
         case 'convert_to_tailwind': {
-          const input = args as ConvertToTailwindInput;
+          const input = args as unknown as ConvertToTailwindInput;
           const result = await convertToTailwind(input, toolContext);
           return formatToolResponse(result);
         }
 
         case 'generate_component': {
-          const input = args as GenerateComponentInput;
+          const input = args as unknown as GenerateComponentInput;
           const result = await generateComponent(input, toolContext);
           return formatToolResponse(result);
         }

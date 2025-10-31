@@ -143,7 +143,7 @@ export interface GenerateComponentOutput {
  * Context passed to tool handlers
  */
 export interface ToolContext {
-  figmaAccessToken?: string;
+  figmaAccessToken: string | undefined;
   logger: {
     debug: (message: string) => void;
     info: (message: string) => void;
