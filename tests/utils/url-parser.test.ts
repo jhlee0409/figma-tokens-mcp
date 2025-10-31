@@ -21,9 +21,7 @@ describe('URL Parser', () => {
     });
 
     it('should parse URLs with node IDs', () => {
-      const result = parseFigmaUrl(
-        'https://www.figma.com/file/abc123/test?node-id=123:456'
-      );
+      const result = parseFigmaUrl('https://www.figma.com/file/abc123/test?node-id=123:456');
       expect(result.fileKey).toBe('abc123');
       expect(result.nodeId).toBe('123:456');
     });
@@ -54,24 +52,18 @@ describe('URL Parser', () => {
     });
 
     it('should throw on non-Figma URLs', () => {
-      expect(() => parseFigmaUrl('https://www.example.com')).toThrow(
-        FigmaInvalidUrlError
-      );
+      expect(() => parseFigmaUrl('https://www.example.com')).toThrow(FigmaInvalidUrlError);
       expect(() => parseFigmaUrl('https://www.google.com/file/abc123')).toThrow(
         FigmaInvalidUrlError
       );
     });
 
     it('should throw on invalid Figma URL paths', () => {
-      expect(() => parseFigmaUrl('https://www.figma.com/')).toThrow(
-        FigmaInvalidUrlError
-      );
+      expect(() => parseFigmaUrl('https://www.figma.com/')).toThrow(FigmaInvalidUrlError);
       expect(() => parseFigmaUrl('https://www.figma.com/invalid/abc123')).toThrow(
         FigmaInvalidUrlError
       );
-      expect(() => parseFigmaUrl('https://www.figma.com/file/')).toThrow(
-        FigmaInvalidUrlError
-      );
+      expect(() => parseFigmaUrl('https://www.figma.com/file/')).toThrow(FigmaInvalidUrlError);
     });
 
     it('should handle complex query parameters', () => {
@@ -83,9 +75,7 @@ describe('URL Parser', () => {
     });
 
     it('should handle URLs with fragments', () => {
-      const result = parseFigmaUrl(
-        'https://www.figma.com/file/abc123/test#section'
-      );
+      const result = parseFigmaUrl('https://www.figma.com/file/abc123/test#section');
       expect(result.fileKey).toBe('abc123');
     });
   });
@@ -117,12 +107,8 @@ describe('URL Parser', () => {
 
   describe('extractFileKey', () => {
     it('should extract file key from valid URLs', () => {
-      expect(extractFileKey('https://www.figma.com/file/abc123/test')).toBe(
-        'abc123'
-      );
-      expect(extractFileKey('https://www.figma.com/design/xyz789/test')).toBe(
-        'xyz789'
-      );
+      expect(extractFileKey('https://www.figma.com/file/abc123/test')).toBe('abc123');
+      expect(extractFileKey('https://www.figma.com/design/xyz789/test')).toBe('xyz789');
     });
 
     it('should return null for invalid URLs', () => {

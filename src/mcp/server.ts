@@ -20,7 +20,12 @@ import type {
   ConvertToTailwindInput,
   GenerateComponentInput,
 } from './types.js';
-import { extractTokens, convertToTailwind, generateComponent, formatToolResponse } from './tools.js';
+import {
+  extractTokens,
+  convertToTailwind,
+  generateComponent,
+  formatToolResponse,
+} from './tools.js';
 import { createErrorResponse } from '../utils/mcp-errors.js';
 import { Logger, LogLevel } from '../utils/logger.js';
 
@@ -79,7 +84,8 @@ export function createServer(config: ServerConfig = {}): Server {
                 type: 'string',
                 enum: ['colors', 'typography'],
               },
-              description: 'Optional array of token types to extract. If not specified, all types are extracted.',
+              description:
+                'Optional array of token types to extract. If not specified, all types are extracted.',
             },
             extractionStrategy: {
               type: 'string',
@@ -300,8 +306,12 @@ export async function startServer(config: ServerConfig = {}): Promise<void> {
   };
 
   // Register shutdown handlers
-  process.on('SIGINT', () => shutdown('SIGINT'));
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => {
+    void shutdown('SIGINT');
+  });
+  process.on('SIGTERM', () => {
+    void shutdown('SIGTERM');
+  });
 
   // Handle uncaught errors
   process.on('uncaughtException', (error) => {

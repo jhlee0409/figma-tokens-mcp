@@ -15,7 +15,11 @@ import { convertToTailwindV3 } from '../core/converters/tailwind-v3.js';
 import { convertToTailwindV4 } from '../core/converters/tailwind-v4.js';
 import { generateComponent as generateReactComponent } from '../core/generators/react-generator.js';
 import { parseFigmaUrl } from '../utils/url-parser.js';
-import { isValidTokenStructure, countTokens, getAvailableTokenTypes } from '../utils/token-validator.js';
+import {
+  isValidTokenStructure,
+  countTokens,
+  getAvailableTokenTypes,
+} from '../utils/token-validator.js';
 import { MCPToolError, validateRequiredParams, validateParamTypes } from '../utils/mcp-errors.js';
 import type {
   ExtractTokensInput,
@@ -25,7 +29,6 @@ import type {
   GenerateComponentInput,
   GenerateComponentOutput,
   ToolContext,
-  ToolResponse,
   TokenWarning,
 } from './types.js';
 
@@ -173,19 +176,19 @@ export async function extractTokens(
 
       // Convert styles to merged format
       const styleTokens = [
-        ...Object.values(stylesResult.colors).map((c) => ({
-          name: c.name,
+        ...Object.entries(stylesResult.colors).map(([name, c]) => ({
+          name,
           value: c.value,
-          type: 'color',
-          source: 'styles',
-          metadata: { styleId: c.id, description: c.description },
+          type: 'color' as const,
+          source: 'styles' as const,
+          metadata: { description: c.description },
         })),
-        ...Object.values(stylesResult.typography).map((t) => ({
-          name: t.name,
+        ...Object.entries(stylesResult.typography).map(([name, t]) => ({
+          name,
           value: t,
-          type: 'typography',
-          source: 'styles',
-          metadata: { styleId: t.id, description: t.description },
+          type: 'typography' as const,
+          source: 'styles' as const,
+          metadata: { description: t.description },
         })),
       ];
 
@@ -215,7 +218,7 @@ export async function extractTokens(
       };
     } else {
       throw new MCPToolError(
-        `Invalid extraction strategy: ${actualStrategy}`,
+        `Invalid extraction strategy: ${actualStrategy as string}`,
         'extract_tokens',
         'INVALID_STRATEGY'
       );
@@ -241,7 +244,9 @@ export async function extractTokens(
       totalTokens: tokenCount,
       byType: tokenTypesList.reduce(
         (acc, type) => {
-          acc[type] = countTokens((filteredHierarchy as Record<string, unknown>)[type] as Record<string, unknown>);
+          acc[type] = countTokens(
+            (filteredHierarchy as Record<string, unknown>)[type] as Record<string, unknown>
+          );
           return acc;
         },
         {} as Record<string, number>
@@ -270,8 +275,10 @@ export async function extractTokens(
       warnings,
       statistics,
     };
-  } catch (error) {
-    context.logger.error('Token extraction failed', error as Error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      context.logger.error('Token extraction failed', error);
+    }
     throw error;
   }
 }
@@ -291,13 +298,7 @@ export async function convertToTailwind(
   input: ConvertToTailwindInput,
   context: ToolContext
 ): Promise<ConvertToTailwindOutput> {
-  const {
-    tokens,
-    tailwindVersion = 'v4',
-    preset = 'merge',
-    outputPath = './',
-    typescript = true,
-  } = input;
+  const { tokens, tailwindVersion = 'v4', preset = 'merge', typescript = true } = input;
 
   context.logger.info(`Converting tokens to Tailwind CSS ${tailwindVersion}`);
 
@@ -336,10 +337,10 @@ export async function convertToTailwind(
 
       // Map files to our format
       const files = result.files.map((file) => ({
-        path: outputPath,
-        filename: file.filename,
+        path: file.path,
+        filename: file.name,
         content: file.content,
-        type: file.type as 'config' | 'css' | 'component',
+        type: (file.language === 'css' ? 'css' : 'config') as 'config' | 'css' | 'component',
       }));
 
       return {
@@ -369,10 +370,10 @@ export async function convertToTailwind(
 
       // Map files to our format
       const files = result.files.map((file) => ({
-        path: outputPath,
-        filename: file.filename,
+        path: file.path,
+        filename: file.name,
         content: file.content,
-        type: file.type as 'config' | 'css' | 'component',
+        type: (file.language === 'css' ? 'css' : 'config') as 'config' | 'css' | 'component',
       }));
 
       return {
@@ -394,8 +395,10 @@ export async function convertToTailwind(
         ],
       };
     }
-  } catch (error) {
-    context.logger.error('Tailwind conversion failed', error as Error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      context.logger.error('Tailwind conversion failed', error);
+    }
     throw error;
   }
 }
@@ -427,7 +430,11 @@ export async function generateComponent(
   context.logger.info(`Generating ${framework} component: ${componentName}`);
 
   // Validate required parameters
-  validateRequiredParams({ componentName, tokens }, ['componentName', 'tokens'], 'generate_component');
+  validateRequiredParams(
+    { componentName, tokens },
+    ['componentName', 'tokens'],
+    'generate_component'
+  );
 
   // Validate token structure
   if (!isValidTokenStructure(tokens)) {
@@ -450,7 +457,7 @@ export async function generateComponent(
 
   if (framework !== 'react') {
     throw new MCPToolError(
-      `Unsupported framework: ${framework}. Only 'react' is currently supported.`,
+      `Unsupported framework: ${framework as string}. Only 'react' is currently supported.`,
       'generate_component',
       'UNSUPPORTED_FRAMEWORK',
       { framework }
@@ -474,21 +481,20 @@ export async function generateComponent(
     context.logger.info('Generating React component with CVA variants');
     const result = generateReactComponent({
       componentName,
-      componentType: 'Button', // Default to Button for MVP
       tokens,
-      typescript,
+      outputPath,
     });
 
     const filename = typescript ? `${componentName}.tsx` : `${componentName}.jsx`;
 
     // Extract metadata from generated component
-    const variants = extractVariantsFromCode(result.code);
-    const props = extractPropsFromCode(result.code);
+    const variants = extractVariantsFromCode(result.content);
+    const props = extractPropsFromCode(result.content);
 
     const component = {
       path: outputPath,
       filename,
-      content: result.code,
+      content: result.content,
       type: 'component' as const,
     };
 
@@ -510,8 +516,10 @@ export async function generateComponent(
       usage,
       warnings,
     };
-  } catch (error) {
-    context.logger.error('Component generation failed', error as Error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      context.logger.error('Component generation failed', error);
+    }
     throw error;
   }
 }
@@ -548,12 +556,12 @@ function extractPropsFromCode(code: string): string[] {
 
   if (propsMatch && propsMatch[1]) {
     const propsBlock = propsMatch[1];
-    const propNames = propsBlock.match(/(\w+)[\?:]:/g);
+    const propNames = propsBlock.match(/(\w+)[?:]:/g);
 
     if (propNames) {
       props.push(
         ...propNames
-          .map((p) => p.replace(/[\?:]/g, '').trim())
+          .map((p) => p.replace(/[?:]/g, '').trim())
           .filter((p) => p !== 'className' && p !== 'children')
       );
     }
@@ -593,7 +601,9 @@ function Example() {
 /**
  * Formats tool output as MCP response
  */
-export function formatToolResponse(output: unknown): { content: Array<{ type: 'text'; text: string }> } {
+export function formatToolResponse(output: unknown): {
+  content: Array<{ type: 'text'; text: string }>;
+} {
   return {
     content: [
       {

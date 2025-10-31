@@ -19,12 +19,7 @@ import {
 describe('MCP Errors', () => {
   describe('MCPToolError', () => {
     it('should create error with all properties', () => {
-      const error = new MCPToolError(
-        'Test error',
-        'test_tool',
-        'TEST_CODE',
-        { detail: 'value' }
-      );
+      const error = new MCPToolError('Test error', 'test_tool', 'TEST_CODE', { detail: 'value' });
 
       expect(error.message).toBe('Test error');
       expect(error.toolName).toBe('test_tool');
@@ -74,12 +69,7 @@ describe('MCP Errors', () => {
     });
 
     it('should format MCPToolError', () => {
-      const error = new MCPToolError(
-        'Tool error',
-        'test_tool',
-        'ERROR_CODE',
-        { detail: 'info' }
-      );
+      const error = new MCPToolError('Tool error', 'test_tool', 'ERROR_CODE', { detail: 'info' });
       const formatted = formatMCPError(error, 'test_tool');
 
       expect(formatted).toContain('MCPToolError');
@@ -152,23 +142,21 @@ describe('MCP Errors', () => {
   describe('validateRequiredParams', () => {
     it('should pass when all required params are present', () => {
       const params = { param1: 'value1', param2: 'value2' };
-      expect(() =>
-        validateRequiredParams(params, ['param1', 'param2'], 'test_tool')
-      ).not.toThrow();
+      expect(() => validateRequiredParams(params, ['param1', 'param2'], 'test_tool')).not.toThrow();
     });
 
     it('should throw when required param is missing', () => {
       const params = { param1: 'value1' };
-      expect(() =>
-        validateRequiredParams(params, ['param1', 'param2'], 'test_tool')
-      ).toThrow(MCPToolError);
+      expect(() => validateRequiredParams(params, ['param1', 'param2'], 'test_tool')).toThrow(
+        MCPToolError
+      );
     });
 
     it('should throw when required param is undefined', () => {
       const params = { param1: 'value1', param2: undefined };
-      expect(() =>
-        validateRequiredParams(params, ['param1', 'param2'], 'test_tool')
-      ).toThrow(MCPToolError);
+      expect(() => validateRequiredParams(params, ['param1', 'param2'], 'test_tool')).toThrow(
+        MCPToolError
+      );
     });
 
     it('should include missing params in error', () => {
@@ -185,19 +173,13 @@ describe('MCP Errors', () => {
 
     it('should pass with empty required array', () => {
       const params = {};
-      expect(() =>
-        validateRequiredParams(params, [], 'test_tool')
-      ).not.toThrow();
+      expect(() => validateRequiredParams(params, [], 'test_tool')).not.toThrow();
     });
 
     it('should accept falsy values except undefined', () => {
       const params = { param1: null, param2: false, param3: 0, param4: '' };
       expect(() =>
-        validateRequiredParams(
-          params,
-          ['param1', 'param2', 'param3', 'param4'],
-          'test_tool'
-        )
+        validateRequiredParams(params, ['param1', 'param2', 'param3', 'param4'], 'test_tool')
       ).not.toThrow();
     });
   });
@@ -220,18 +202,14 @@ describe('MCP Errors', () => {
         obj: 'object',
       };
 
-      expect(() =>
-        validateParamTypes(params, schema, 'test_tool')
-      ).not.toThrow();
+      expect(() => validateParamTypes(params, schema, 'test_tool')).not.toThrow();
     });
 
     it('should throw when type does not match', () => {
       const params = { param: 'string' };
       const schema = { param: 'number' };
 
-      expect(() =>
-        validateParamTypes(params, schema, 'test_tool')
-      ).toThrow(MCPToolError);
+      expect(() => validateParamTypes(params, schema, 'test_tool')).toThrow(MCPToolError);
     });
 
     it('should include type info in error', () => {
@@ -253,45 +231,35 @@ describe('MCP Errors', () => {
       const params = { param1: 'string' };
       const schema = { param1: 'string', param2: 'number' };
 
-      expect(() =>
-        validateParamTypes(params, schema, 'test_tool')
-      ).not.toThrow();
+      expect(() => validateParamTypes(params, schema, 'test_tool')).not.toThrow();
     });
 
     it('should skip validation for undefined params', () => {
       const params = { param1: 'string', param2: undefined };
       const schema = { param1: 'string', param2: 'number' };
 
-      expect(() =>
-        validateParamTypes(params, schema, 'test_tool')
-      ).not.toThrow();
+      expect(() => validateParamTypes(params, schema, 'test_tool')).not.toThrow();
     });
 
     it('should correctly identify array type', () => {
       const params = { arr: [1, 2, 3] };
       const schema = { arr: 'array' };
 
-      expect(() =>
-        validateParamTypes(params, schema, 'test_tool')
-      ).not.toThrow();
+      expect(() => validateParamTypes(params, schema, 'test_tool')).not.toThrow();
     });
 
     it('should distinguish between array and object', () => {
       const params = { arr: [1, 2], obj: { key: 'value' } };
       const schema = { arr: 'array', obj: 'object' };
 
-      expect(() =>
-        validateParamTypes(params, schema, 'test_tool')
-      ).not.toThrow();
+      expect(() => validateParamTypes(params, schema, 'test_tool')).not.toThrow();
     });
 
     it('should throw when array is expected but object is provided', () => {
       const params = { param: { key: 'value' } };
       const schema = { param: 'array' };
 
-      expect(() =>
-        validateParamTypes(params, schema, 'test_tool')
-      ).toThrow(MCPToolError);
+      expect(() => validateParamTypes(params, schema, 'test_tool')).toThrow(MCPToolError);
     });
   });
 });

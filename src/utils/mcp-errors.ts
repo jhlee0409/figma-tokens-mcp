@@ -86,7 +86,10 @@ export function formatMCPError(error: unknown, toolName: string): string {
  * @param toolName - Name of the tool
  * @returns MCP-formatted error response
  */
-export function createErrorResponse(error: unknown, toolName: string): {
+export function createErrorResponse(
+  error: unknown,
+  toolName: string
+): {
   content: Array<{ type: 'text'; text: string }>;
   isError: true;
 } {

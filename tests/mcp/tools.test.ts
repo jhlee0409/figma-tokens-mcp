@@ -5,7 +5,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { extractTokens, convertToTailwind, generateComponent } from '../../src/mcp/tools';
 import type { ToolContext } from '../../src/mcp/types';
-import { MCPToolError } from '../../src/utils/mcp-errors';
+import {
+  MCPToolError,
+  validateRequiredParams,
+  validateParamTypes,
+  formatMCPError,
+  createErrorResponse,
+} from '../../src/utils/mcp-errors';
+import {
+  isValidTokenStructure,
+  countTokens,
+  getAvailableTokenTypes,
+} from '../../src/utils/token-validator';
+import { parseFigmaUrl, isValidFileKey } from '../../src/utils/url-parser';
+import { FigmaAPIError } from '../../src/core/extractors/errors';
 
 // Mock the extractors and converters
 vi.mock('../../src/core/extractors/figma-api');
@@ -33,9 +46,7 @@ describe('MCP Tools', () => {
 
   describe('extract_tokens', () => {
     it('should validate required parameters', async () => {
-      await expect(
-        extractTokens({ figmaFileUrl: '' } as any, mockContext)
-      ).rejects.toThrow();
+      await expect(extractTokens({ figmaFileUrl: '' } as any, mockContext)).rejects.toThrow();
     });
 
     it('should require Figma access token', async () => {
@@ -53,14 +64,7 @@ describe('MCP Tools', () => {
     });
 
     it('should parse Figma URL correctly', async () => {
-      const { parseFigmaUrl } = await import('../../src/utils/url-parser');
-
-      await expect(
-        extractTokens(
-          { figmaFileUrl: 'invalid-url' },
-          mockContext
-        )
-      ).rejects.toThrow();
+      await expect(extractTokens({ figmaFileUrl: 'invalid-url' }, mockContext)).rejects.toThrow();
     });
 
     it('should accept valid extraction strategies', async () => {
@@ -91,23 +95,19 @@ describe('MCP Tools', () => {
 
   describe('convert_to_tailwind', () => {
     it('should validate required parameters', async () => {
-      await expect(
-        convertToTailwind({} as any, mockContext)
-      ).rejects.toThrow(MCPToolError);
+      await expect(convertToTailwind({} as any, mockContext)).rejects.toThrow(MCPToolError);
     });
 
     it('should validate token structure', async () => {
-      await expect(
-        convertToTailwind({ tokens: null as any }, mockContext)
-      ).rejects.toThrow(MCPToolError);
+      await expect(convertToTailwind({ tokens: null as any }, mockContext)).rejects.toThrow(
+        MCPToolError
+      );
 
-      await expect(
-        convertToTailwind({ tokens: [] as any }, mockContext)
-      ).rejects.toThrow(MCPToolError);
+      await expect(convertToTailwind({ tokens: [] as any }, mockContext)).rejects.toThrow(
+        MCPToolError
+      );
 
-      await expect(
-        convertToTailwind({ tokens: {} }, mockContext)
-      ).rejects.toThrow(MCPToolError);
+      await expect(convertToTailwind({ tokens: {} }, mockContext)).rejects.toThrow(MCPToolError);
     });
 
     it('should accept valid Tailwind versions', () => {
@@ -148,19 +148,14 @@ describe('MCP Tools', () => {
 
   describe('generate_component', () => {
     it('should validate required parameters', async () => {
-      await expect(
-        generateComponent({} as any, mockContext)
-      ).rejects.toThrow(MCPToolError);
+      await expect(generateComponent({} as any, mockContext)).rejects.toThrow(MCPToolError);
 
       await expect(
         generateComponent({ componentName: 'Button' } as any, mockContext)
       ).rejects.toThrow(MCPToolError);
 
       await expect(
-        generateComponent(
-          { componentName: 'Button', tokens: null as any },
-          mockContext
-        )
+        generateComponent({ componentName: 'Button', tokens: null as any }, mockContext)
       ).rejects.toThrow(MCPToolError);
     });
 
@@ -186,13 +181,7 @@ describe('MCP Tools', () => {
     });
 
     it('should accept valid component names', () => {
-      const validNames = [
-        'Button',
-        'MyButton',
-        'Button123',
-        'Card',
-        'InputField',
-      ];
+      const validNames = ['Button', 'MyButton', 'Button123', 'Card', 'InputField'];
 
       for (const name of validNames) {
         expect(/^[A-Z][a-zA-Z0-9]*$/.test(name)).toBe(true);
@@ -248,11 +237,7 @@ describe('MCP Tools', () => {
 
   describe('Parameter validation helpers', () => {
     it('should validate required parameters', () => {
-      const { validateRequiredParams } = require('../../src/utils/mcp-errors');
-
-      expect(() =>
-        validateRequiredParams({}, ['required'], 'test_tool')
-      ).toThrow(MCPToolError);
+      expect(() => validateRequiredParams({}, ['required'], 'test_tool')).toThrow(MCPToolError);
 
       expect(() =>
         validateRequiredParams({ required: undefined }, ['required'], 'test_tool')
@@ -264,38 +249,22 @@ describe('MCP Tools', () => {
     });
 
     it('should validate parameter types', () => {
-      const { validateParamTypes } = require('../../src/utils/mcp-errors');
-
       expect(() =>
-        validateParamTypes(
-          { param: 'string' },
-          { param: 'number' },
-          'test_tool'
-        )
+        validateParamTypes({ param: 'string' }, { param: 'number' }, 'test_tool')
       ).toThrow(MCPToolError);
 
       expect(() =>
-        validateParamTypes(
-          { param: 'string' },
-          { param: 'string' },
-          'test_tool'
-        )
+        validateParamTypes({ param: 'string' }, { param: 'string' }, 'test_tool')
       ).not.toThrow();
 
       expect(() =>
-        validateParamTypes(
-          { param: ['array'] },
-          { param: 'array' },
-          'test_tool'
-        )
+        validateParamTypes({ param: ['array'] }, { param: 'array' }, 'test_tool')
       ).not.toThrow();
     });
   });
 
   describe('Token validation', () => {
     it('should validate token structure', () => {
-      const { isValidTokenStructure } = require('../../src/utils/token-validator');
-
       expect(isValidTokenStructure(null)).toBe(false);
       expect(isValidTokenStructure(undefined)).toBe(false);
       expect(isValidTokenStructure([])).toBe(false);
@@ -304,8 +273,6 @@ describe('MCP Tools', () => {
     });
 
     it('should count tokens', () => {
-      const { countTokens } = require('../../src/utils/token-validator');
-
       expect(countTokens({})).toBe(0);
       expect(countTokens({ color: '#000' })).toBe(1);
       expect(
@@ -319,8 +286,6 @@ describe('MCP Tools', () => {
     });
 
     it('should get available token types', () => {
-      const { getAvailableTokenTypes } = require('../../src/utils/token-validator');
-
       expect(getAvailableTokenTypes({})).toEqual([]);
       expect(
         getAvailableTokenTypes({
@@ -333,15 +298,11 @@ describe('MCP Tools', () => {
 
   describe('URL parsing', () => {
     it('should parse valid Figma URLs', () => {
-      const { parseFigmaUrl } = require('../../src/utils/url-parser');
-
       const result1 = parseFigmaUrl('https://www.figma.com/file/abc123/test');
       expect(result1.fileKey).toBe('abc123');
       expect(result1.nodeId).toBeUndefined();
 
-      const result2 = parseFigmaUrl(
-        'https://www.figma.com/file/xyz789/test?node-id=1:2'
-      );
+      const result2 = parseFigmaUrl('https://www.figma.com/file/xyz789/test?node-id=1:2');
       expect(result2.fileKey).toBe('xyz789');
       expect(result2.nodeId).toBe('1:2');
 
@@ -350,21 +311,12 @@ describe('MCP Tools', () => {
     });
 
     it('should reject invalid URLs', () => {
-      const { parseFigmaUrl } = require('../../src/utils/url-parser');
-      const { FigmaInvalidUrlError } = require('../../src/core/extractors/errors');
-
-      expect(() => parseFigmaUrl('not-a-url')).toThrow(FigmaInvalidUrlError);
-      expect(() => parseFigmaUrl('https://example.com')).toThrow(
-        FigmaInvalidUrlError
-      );
-      expect(() =>
-        parseFigmaUrl('https://www.figma.com/invalid/path')
-      ).toThrow(FigmaInvalidUrlError);
+      expect(() => parseFigmaUrl('not-a-url')).toThrow();
+      expect(() => parseFigmaUrl('https://example.com')).toThrow();
+      expect(() => parseFigmaUrl('https://www.figma.com/invalid/path')).toThrow();
     });
 
     it('should validate file keys', () => {
-      const { isValidFileKey } = require('../../src/utils/url-parser');
-
       expect(isValidFileKey('abc123')).toBe(true);
       expect(isValidFileKey('ABC123xyz')).toBe(true);
       expect(isValidFileKey('invalid-key')).toBe(false);
@@ -375,9 +327,6 @@ describe('MCP Tools', () => {
 
   describe('Error formatting', () => {
     it('should format MCP errors', () => {
-      const { formatMCPError } = require('../../src/utils/mcp-errors');
-      const { FigmaAPIError } = require('../../src/core/extractors/errors');
-
       const error1 = new FigmaAPIError('Test error', 404);
       const formatted1 = formatMCPError(error1, 'test_tool');
       expect(formatted1).toContain('FigmaAPIError');
@@ -391,8 +340,6 @@ describe('MCP Tools', () => {
     });
 
     it('should create error responses', () => {
-      const { createErrorResponse } = require('../../src/utils/mcp-errors');
-
       const error = new Error('Test error');
       const response = createErrorResponse(error, 'test_tool');
 

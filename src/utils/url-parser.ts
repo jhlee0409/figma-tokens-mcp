@@ -32,19 +32,13 @@ export function parseFigmaUrl(url: string): ParsedFigmaUrl {
     // Add protocol if missing
     const urlWithProtocol = cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`;
     urlObj = new URL(urlWithProtocol);
-  } catch (error) {
-    throw new FigmaInvalidUrlError(
-      `Invalid URL format: ${url}`,
-      url
-    );
+  } catch {
+    throw new FigmaInvalidUrlError(`Invalid URL format: ${url}`, url);
   }
 
   // Check if it's a Figma URL
   if (!urlObj.hostname.includes('figma.com')) {
-    throw new FigmaInvalidUrlError(
-      `URL must be from figma.com domain: ${url}`,
-      url
-    );
+    throw new FigmaInvalidUrlError(`URL must be from figma.com domain: ${url}`, url);
   }
 
   // Extract file key from path
@@ -61,12 +55,17 @@ export function parseFigmaUrl(url: string): ParsedFigmaUrl {
   const fileKey = pathMatch[2];
 
   // Extract node ID from query parameter if present
-  const nodeId = urlObj.searchParams.get('node-id') ?? undefined;
+  const nodeId = urlObj.searchParams.get('node-id');
 
-  return {
+  const result: ParsedFigmaUrl = {
     fileKey,
-    nodeId,
   };
+
+  if (nodeId) {
+    result.nodeId = nodeId;
+  }
+
+  return result;
 }
 
 /**
