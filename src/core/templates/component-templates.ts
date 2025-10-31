@@ -55,16 +55,18 @@ export function generateVariantsConfig(spec: ComponentSpecification): {
   const defaultVariants: Record<string, string> = {};
 
   for (const variant of spec.variants) {
-    variantConfig[variant.name] = {};
+    const variantObj = variantConfig[variant.name] || {};
+    variantConfig[variant.name] = variantObj;
 
     for (const value of variant.values) {
       // Placeholder classes - will be customized with actual tokens
-      variantConfig[variant.name][value] = `/* ${variant.name}-${value} classes */`;
+      variantObj[value] = `/* ${variant.name}-${value} classes */`;
     }
 
     // Set first value as default
-    if (variant.values.length > 0) {
-      defaultVariants[variant.name] = variant.values[0];
+    const firstValue = variant.values[0];
+    if (firstValue !== undefined) {
+      defaultVariants[variant.name] = firstValue;
     }
   }
 
@@ -305,7 +307,7 @@ export function generateCompleteComponent(
 ): string {
   const header = generateFileHeader(
     spec.name,
-    spec.metadata.source === 'figma' ? spec.metadata.figmaUrl || 'template' : 'template'
+    spec.metadata.source === 'figma' ? (spec.metadata.figmaUrl ?? 'template') : 'template'
   );
 
   const template = generateComponentTemplate(spec, customBaseClasses);

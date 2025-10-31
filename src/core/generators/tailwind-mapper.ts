@@ -27,7 +27,7 @@ export interface TailwindClassMapping {
  */
 export function mapColorToken(
   tokenName: string,
-  tokenValue: string,
+  _tokenValue: string,
   context: 'background' | 'text' | 'border' = 'background'
 ): string[] {
   const parts = tokenName.split('.');
@@ -41,10 +41,10 @@ export function mapColorToken(
   const relevantParts = parts[0] === 'colors' ? parts.slice(1) : parts;
 
   if (relevantParts.length >= 2) {
-    colorName = relevantParts[relevantParts.length - 2];
-    shade = relevantParts[relevantParts.length - 1];
+    colorName = relevantParts[relevantParts.length - 2] ?? '';
+    shade = relevantParts[relevantParts.length - 1] ?? '';
   } else {
-    colorName = relevantParts[relevantParts.length - 1];
+    colorName = relevantParts[relevantParts.length - 1] ?? '';
   }
 
   // Generate Tailwind classes

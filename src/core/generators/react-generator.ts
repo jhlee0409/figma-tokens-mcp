@@ -9,7 +9,7 @@ import { extractTokens, mapTokenToTailwind } from './tailwind-mapper';
 
 export interface GenerateComponentOptions {
   componentName: string;
-  tokens?: Record<string, unknown>;
+  tokens: Record<string, unknown>;
   spec?: ComponentSpecification;
   customBaseClasses?: string;
   outputPath?: string;
@@ -115,7 +115,7 @@ function enhanceSpecWithTokens(
   const variantNames = new Set<string>();
   colorTokens.forEach((token) => {
     const parts = token.name.split('.');
-    if (parts.length >= 2) {
+    if (parts.length >= 2 && parts[1]) {
       variantNames.add(parts[1]); // e.g., colors.primary -> "primary"
     }
   });
@@ -125,7 +125,7 @@ function enhanceSpecWithTokens(
   sizeTokens.forEach((token) => {
     const parts = token.name.split('.');
     const sizeName = parts[parts.length - 1];
-    if (/^(xs|sm|md|lg|xl|2xl|3xl|4xl)$/.test(sizeName)) {
+    if (sizeName && /^(xs|sm|md|lg|xl|2xl|3xl|4xl)$/.test(sizeName)) {
       sizeNames.add(sizeName);
     }
   });
@@ -221,7 +221,7 @@ function extractMetadata(spec: ComponentSpecification): ComponentMetadata {
 export function generateButton(tokens?: Record<string, unknown>): GeneratedComponent {
   return generateComponent({
     componentName: 'Button',
-    tokens,
+    tokens: tokens ?? {},
     spec: {
       name: 'Button',
       type: 'button',
@@ -260,7 +260,7 @@ export function generateButton(tokens?: Record<string, unknown>): GeneratedCompo
 export function generateInput(tokens?: Record<string, unknown>): GeneratedComponent {
   return generateComponent({
     componentName: 'Input',
-    tokens,
+    tokens: tokens ?? {},
     spec: {
       name: 'Input',
       type: 'input',
@@ -295,7 +295,7 @@ export function generateInput(tokens?: Record<string, unknown>): GeneratedCompon
 export function generateCard(tokens?: Record<string, unknown>): GeneratedComponent {
   return generateComponent({
     componentName: 'Card',
-    tokens,
+    tokens: tokens ?? {},
     spec: {
       name: 'Card',
       type: 'card',

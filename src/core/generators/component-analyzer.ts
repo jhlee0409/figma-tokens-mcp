@@ -51,7 +51,7 @@ export function parseFigmaURL(url: string): FigmaSectionURL | null {
 
     // Extract file ID from path (e.g., /file/ABC123/...)
     const fileMatch = urlObj.pathname.match(/\/file\/([^/]+)/);
-    if (!fileMatch) {
+    if (!fileMatch || !fileMatch[1]) {
       return null;
     }
 
@@ -260,5 +260,9 @@ export function getTemplateSpecification(
     },
   };
 
-  return specs[componentType];
+  const spec = specs[componentType];
+  if (!spec) {
+    throw new Error(`Unknown component type: ${componentType}`);
+  }
+  return spec;
 }
