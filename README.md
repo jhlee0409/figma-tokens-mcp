@@ -129,6 +129,7 @@ figma-tokens-mcp
 Configuration will be provided through environment variables or a config file (TBD).
 
 Required:
+
 - `FIGMA_ACCESS_TOKEN` - Your Figma API access token
 
 ## Contributing
