@@ -44,7 +44,14 @@ export type Transform = [[number, number, number], [number, number, number]];
 // Paint & Effect Types
 // ============================================================================
 
-export type PaintType = 'SOLID' | 'GRADIENT_LINEAR' | 'GRADIENT_RADIAL' | 'GRADIENT_ANGULAR' | 'GRADIENT_DIAMOND' | 'IMAGE' | 'EMOJI';
+export type PaintType =
+  | 'SOLID'
+  | 'GRADIENT_LINEAR'
+  | 'GRADIENT_RADIAL'
+  | 'GRADIENT_ANGULAR'
+  | 'GRADIENT_DIAMOND'
+  | 'IMAGE'
+  | 'EMOJI';
 
 export type BlendMode =
   | 'PASS_THROUGH'

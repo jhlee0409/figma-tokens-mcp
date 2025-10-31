@@ -109,7 +109,9 @@ export class FigmaAPIClient {
     }
 
     if (!this.isValidToken(this.config.accessToken)) {
-      throw new FigmaAuthError('Invalid Figma access token format. Token should be a non-empty string.');
+      throw new FigmaAuthError(
+        'Invalid Figma access token format. Token should be a non-empty string.'
+      );
     }
 
     // Initialize logger
@@ -248,7 +250,7 @@ export class FigmaAPIClient {
    * Extracts retry-after header value in milliseconds
    */
   private getRetryAfter(response: AxiosResponse): number {
-    const retryAfter = response.headers['retry-after'];
+    const retryAfter = response.headers['retry-after'] as string | undefined;
     if (retryAfter) {
       const seconds = parseInt(retryAfter, 10);
       if (!isNaN(seconds)) {
@@ -283,12 +285,14 @@ export class FigmaAPIClient {
     config.retryCount = retryCount + 1;
 
     const delay = this.config.initialRetryDelay * Math.pow(2, retryCount);
-    this.logger.debug(`Retrying request (attempt ${config.retryCount}/${this.config.maxRetries}) after ${delay}ms`);
+    this.logger.debug(
+      `Retrying request (attempt ${config.retryCount}/${this.config.maxRetries}) after ${delay}ms`
+    );
 
     await this.sleep(delay);
 
     try {
-      const response = await this.client.request(config);
+      const response = await this.client.request<never>(config);
       return response.data;
     } catch (retryError) {
       if (axios.isAxiosError(retryError)) {
@@ -326,7 +330,7 @@ export class FigmaAPIClient {
    */
   parseFigmaUrl(url: string): ParsedFigmaUrl {
     try {
-      const urlObj = new URL(url);
+      const urlObj = new globalThis.URL(url);
 
       // Extract file key from path
       const pathMatch = urlObj.pathname.match(/\/(file|design)\/([a-zA-Z0-9]+)/);
@@ -338,9 +342,13 @@ export class FigmaAPIClient {
 
       // Extract node ID from query params
       const nodeIdParam = urlObj.searchParams.get('node-id');
-      const nodeId = nodeIdParam ? nodeIdParam.replace(/-/g, ':') : undefined;
 
-      return { fileKey, nodeId };
+      if (nodeIdParam) {
+        const nodeId = nodeIdParam.replace(/-/g, ':');
+        return { fileKey, nodeId };
+      }
+
+      return { fileKey };
     } catch (error) {
       if (error instanceof FigmaInvalidUrlError) {
         throw error;
@@ -418,7 +426,9 @@ export class FigmaAPIClient {
     const startTime = Date.now();
 
     try {
-      const response = await this.client.get<FileVariablesResponse>(`/files/${fileKey}/variables/local`);
+      const response = await this.client.get<FileVariablesResponse>(
+        `/files/${fileKey}/variables/local`
+      );
       const duration = Date.now() - startTime;
       const variableCount = Object.keys(response.data.meta.variables).length;
       this.logger.info(`Fetched ${variableCount} variables in ${duration}ms`);

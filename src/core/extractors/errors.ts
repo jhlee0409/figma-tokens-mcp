@@ -58,7 +58,10 @@ export class FigmaNotFoundError extends FigmaAPIError {
  * Invalid URL error - malformed Figma URL
  */
 export class FigmaInvalidUrlError extends FigmaAPIError {
-  constructor(message: string, public url: string) {
+  constructor(
+    message: string,
+    public url: string
+  ) {
     super(message, undefined, { url });
     this.name = 'FigmaInvalidUrlError';
     Object.setPrototypeOf(this, FigmaInvalidUrlError.prototype);

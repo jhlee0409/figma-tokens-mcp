@@ -8,11 +8,13 @@ import { FigmaAPIClient } from '../../src/core/extractors/figma-api';
 import {
   FigmaAPIError,
   FigmaAuthError,
-  FigmaRateLimitError,
-  FigmaNotFoundError,
   FigmaInvalidUrlError,
 } from '../../src/core/extractors/errors';
-import type { FigmaFile, FileVariablesResponse, FileNodesResponse } from '../../src/core/extractors/types';
+import type {
+  FigmaFile,
+  FileVariablesResponse,
+  FileNodesResponse,
+} from '../../src/core/extractors/types';
 
 // Mock axios
 vi.mock('axios');
@@ -36,6 +38,7 @@ describe('FigmaAPIClient', () => {
       },
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockedAxios.create.mockReturnValue(mockAxiosInstance as any);
     mockedAxios.isAxiosError = vi.fn().mockReturnValue(true);
   });
@@ -74,7 +77,7 @@ describe('FigmaAPIClient', () => {
 
     it('should set custom baseUrl', () => {
       const customUrl = 'https://custom-api.figma.com';
-      const client = new FigmaAPIClient({
+      new FigmaAPIClient({
         accessToken: testToken,
         baseUrl: customUrl,
       });
@@ -183,6 +186,7 @@ describe('FigmaAPIClient', () => {
 
     it('should fetch file successfully', async () => {
       const mockGet = vi.fn().mockResolvedValue({ data: mockFileResponse });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockedAxios.create as any).mockReturnValue({
         get: mockGet,
         interceptors: {
@@ -200,6 +204,7 @@ describe('FigmaAPIClient', () => {
 
     it('should return cached file on subsequent calls', async () => {
       const mockGet = vi.fn().mockResolvedValue({ data: mockFileResponse });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockedAxios.create as any).mockReturnValue({
         get: mockGet,
         interceptors: {
@@ -221,6 +226,7 @@ describe('FigmaAPIClient', () => {
 
     it('should clear cache', async () => {
       const mockGet = vi.fn().mockResolvedValue({ data: mockFileResponse });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockedAxios.create as any).mockReturnValue({
         get: mockGet,
         interceptors: {
@@ -250,14 +256,14 @@ describe('FigmaAPIClient', () => {
       error: false,
       meta: {
         variables: {
-          'var1': {
+          var1: {
             id: 'var1',
             name: 'Primary Color',
             key: 'primary-color',
             variableCollectionId: 'col1',
             resolvedType: 'COLOR',
             valuesByMode: {
-              'mode1': { r: 1, g: 0, b: 0, a: 1 },
+              mode1: { r: 1, g: 0, b: 0, a: 1 },
             },
             remote: false,
             description: 'Main brand color',
@@ -267,7 +273,7 @@ describe('FigmaAPIClient', () => {
           },
         },
         variableCollections: {
-          'col1': {
+          col1: {
             id: 'col1',
             name: 'Colors',
             key: 'colors',
@@ -287,6 +293,7 @@ describe('FigmaAPIClient', () => {
 
     it('should fetch variables successfully', async () => {
       const mockGet = vi.fn().mockResolvedValue({ data: mockVariablesResponse });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockedAxios.create as any).mockReturnValue({
         get: mockGet,
         interceptors: {
@@ -331,6 +338,7 @@ describe('FigmaAPIClient', () => {
 
     it('should fetch nodes successfully', async () => {
       const mockGet = vi.fn().mockResolvedValue({ data: mockNodesResponse });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockedAxios.create as any).mockReturnValue({
         get: mockGet,
         interceptors: {
@@ -365,14 +373,14 @@ describe('FigmaAPIClient', () => {
       componentSets: {},
       schemaVersion: 0,
       styles: {
-        'style1': {
+        style1: {
           key: 'style1',
           name: 'Primary',
           description: 'Primary fill style',
           styleType: 'FILL',
           remote: false,
         },
-        'style2': {
+        style2: {
           key: 'style2',
           name: 'Heading',
           description: 'Heading text style',
@@ -395,6 +403,7 @@ describe('FigmaAPIClient', () => {
 
     it('should fetch styles successfully', async () => {
       const mockGet = vi.fn().mockResolvedValue({ data: mockFileResponse });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockedAxios.create as any).mockReturnValue({
         get: mockGet,
         interceptors: {
@@ -429,17 +438,14 @@ describe('FigmaAPIClient', () => {
       };
 
       const mockGet = vi.fn().mockRejectedValue(mockError);
-      const errorHandler = vi.fn();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockedAxios.create as any).mockReturnValue({
         get: mockGet,
         interceptors: {
           request: { use: vi.fn() },
           response: {
-            use: vi.fn((success, error) => {
-              errorHandler.mockImplementation(error);
-              return Promise.reject(mockError);
-            }),
+            use: vi.fn(() => Promise.reject(mockError)),
           },
         },
       });
@@ -461,6 +467,7 @@ describe('FigmaAPIClient', () => {
 
       const mockGet = vi.fn().mockRejectedValue(mockError);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockedAxios.create as any).mockReturnValue({
         get: mockGet,
         interceptors: {
