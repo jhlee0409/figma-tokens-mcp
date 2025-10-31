@@ -67,3 +67,14 @@ export type {
   // URL parsing types
   ParsedFigmaUrl,
 } from './types';
+
+/**
+ * Variables Extractor exports
+ */
+export { VariablesExtractor, createVariablesExtractor } from './variables-extractor';
+export type {
+  ExtractedVariable,
+  TokenNode,
+  VariablesExtractionResult,
+  VariableExtractionOptions,
+} from './variables-extractor';
