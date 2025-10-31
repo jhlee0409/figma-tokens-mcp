@@ -280,7 +280,7 @@ export class FigmaAPIClient {
       throw error;
     }
 
-    const config = error.config as { retryCount?: number };
+    const config = error.config as typeof error.config & { retryCount?: number };
     const retryCount = config.retryCount ?? 0;
     config.retryCount = retryCount + 1;
 
@@ -292,7 +292,8 @@ export class FigmaAPIClient {
     await this.sleep(delay);
 
     try {
-      const response = await this.client.request<never>(config);
+      const response = await this.client.request(config);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return response.data;
     } catch (retryError) {
       if (axios.isAxiosError(retryError)) {
@@ -306,7 +307,7 @@ export class FigmaAPIClient {
    * Sleep utility for delays
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise((resolve) => globalThis.setTimeout(resolve, ms));
   }
 
   /**
