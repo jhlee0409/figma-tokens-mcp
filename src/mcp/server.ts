@@ -11,8 +11,6 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
   Tool,
-  CallToolResult,
-  TextContent,
 } from '@modelcontextprotocol/sdk/types.js';
 import type {
   ServerConfig,
