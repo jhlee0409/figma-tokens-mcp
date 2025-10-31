@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * MCP Server for Figma Tokens
  *
@@ -36,7 +34,7 @@ export function createServer(config: ServerConfig = {}): Server {
   );
 
   // List available tools
-  server.setRequestHandler(ListToolsRequestSchema, async () => {
+  server.setRequestHandler(ListToolsRequestSchema, () => {
     const tools: Tool[] = [
       {
         name: 'health_check',
@@ -62,8 +60,8 @@ export function createServer(config: ServerConfig = {}): Server {
   });
 
   // Handle tool calls
-  server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    const { name, arguments: args } = request.params;
+  server.setRequestHandler(CallToolRequestSchema, (request) => {
+    const { name, arguments: _args } = request.params;
 
     switch (name) {
       case 'health_check': {

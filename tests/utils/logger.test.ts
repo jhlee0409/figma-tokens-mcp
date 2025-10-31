@@ -44,7 +44,9 @@ describe('Logger', () => {
     const timestampLogger = new Logger({ level: LogLevel.INFO, enableTimestamp: true });
     timestampLogger.info('test message');
     const calls = consoleErrorSpy.mock.calls[0];
-    expect(calls?.[0]).toMatch(/\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\] \[INFO\] test message/);
+    expect(calls?.[0]).toMatch(
+      /\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\] \[INFO\] test message/
+    );
   });
 
   it('should log error with stack trace', () => {

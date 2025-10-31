@@ -25,8 +25,8 @@ export class Logger {
   }
 
   private formatMessage(level: LogLevel, message: string): string {
-    const timestamp = this.config.enableTimestamp ? `[${new Date().toISOString()}]` : '';
-    return `${timestamp} [${level}] ${message}`;
+    const timestamp = this.config.enableTimestamp ? `[${new Date().toISOString()}] ` : '';
+    return `${timestamp}[${level}] ${message}`;
   }
 
   private shouldLog(level: LogLevel): boolean {
