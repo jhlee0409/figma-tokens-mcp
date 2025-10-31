@@ -12,6 +12,10 @@ on:
 
 jobs:
   claude-review:
+    # Only run if the CLAUDE_CODE_OAUTH_TOKEN secret is available
+    # This prevents the workflow from failing when the secret is not set
+    if: vars.CLAUDE_CODE_REVIEW_ENABLED == 'true'
+
     # Optional: Filter by PR author
     # if: |
     #   github.event.pull_request.user.login == 'external-contributor' ||
