@@ -38,10 +38,7 @@ export type {
  * Conflict Resolver exports
  */
 
-export {
-  detectConflicts,
-  resolveConflicts,
-} from './conflict-resolver';
+export { detectConflicts, resolveConflicts } from './conflict-resolver';
 
 export type {
   ConflictType,

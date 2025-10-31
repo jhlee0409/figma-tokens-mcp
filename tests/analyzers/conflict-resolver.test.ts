@@ -3,13 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import {
-  detectConflicts,
-  resolveConflicts,
-  ConflictReport,
-  ConflictType,
-  ResolutionStrategyType,
-} from '@/core/analyzers/conflict-resolver';
+import { detectConflicts, resolveConflicts } from '@/core/analyzers/conflict-resolver';
 import { NormalizedToken } from '@/core/analyzers/normalizer';
 
 describe('detectConflicts', () => {
@@ -118,7 +112,7 @@ describe('detectConflicts', () => {
     const result = detectConflicts(tokens);
 
     expect(result.conflicts.length).toBeGreaterThan(0);
-    const nearDuplicate = result.conflicts.find(c => c.type === 'near_duplicate');
+    const nearDuplicate = result.conflicts.find((c) => c.type === 'near_duplicate');
     expect(nearDuplicate).toBeDefined();
     expect(nearDuplicate?.severity).toBe('low');
   });
@@ -255,7 +249,7 @@ describe('resolveConflicts', () => {
       const conflicts = detectConflicts(tokens).conflicts;
       const result = resolveConflicts(tokens, conflicts, 'variables_priority');
 
-      const resolvedToken = result.tokens.find(t => t.normalizedName === 'primary/blue');
+      const resolvedToken = result.tokens.find((t) => t.normalizedName === 'primary/blue');
       expect(resolvedToken?.source).toBe('variable');
       expect(resolvedToken?.value).toBe('#0080ff');
       expect(resolvedToken?.wasConflicted).toBe(true);
@@ -292,7 +286,7 @@ describe('resolveConflicts', () => {
       const conflicts = detectConflicts(tokens).conflicts;
       const result = resolveConflicts(tokens, conflicts, 'variables_priority');
 
-      const nonConflictedToken = result.tokens.find(t => t.normalizedName === 'secondary/red');
+      const nonConflictedToken = result.tokens.find((t) => t.normalizedName === 'secondary/red');
       expect(nonConflictedToken?.wasConflicted).toBe(false);
     });
   });
@@ -321,7 +315,7 @@ describe('resolveConflicts', () => {
       const conflicts = detectConflicts(tokens).conflicts;
       const result = resolveConflicts(tokens, conflicts, 'styles_priority');
 
-      const resolvedToken = result.tokens.find(t => t.normalizedName === 'primary/blue');
+      const resolvedToken = result.tokens.find((t) => t.normalizedName === 'primary/blue');
       expect(resolvedToken?.source).toBe('style');
       expect(resolvedToken?.value).toBe('#0066cc');
     });
@@ -353,7 +347,7 @@ describe('resolveConflicts', () => {
       const conflicts = detectConflicts(tokens).conflicts;
       const result = resolveConflicts(tokens, conflicts, 'newest');
 
-      const resolvedToken = result.tokens.find(t => t.normalizedName === 'primary/blue');
+      const resolvedToken = result.tokens.find((t) => t.normalizedName === 'primary/blue');
       expect(resolvedToken?.value).toBe('#0066cc'); // Newer timestamp
       expect(resolvedToken?.resolutionStrategy).toBe('newest');
     });
@@ -382,7 +376,7 @@ describe('resolveConflicts', () => {
       const result = resolveConflicts(tokens, conflicts, 'newest');
 
       // Should pick first token when timestamps are missing
-      expect(result.tokens.find(t => t.normalizedName === 'primary/blue')).toBeDefined();
+      expect(result.tokens.find((t) => t.normalizedName === 'primary/blue')).toBeDefined();
     });
   });
 
@@ -410,8 +404,8 @@ describe('resolveConflicts', () => {
       const conflicts = detectConflicts(tokens).conflicts;
       const result = resolveConflicts(tokens, conflicts, 'rename_both');
 
-      const varToken = result.tokens.find(t => t.normalizedName === 'primary/blue-var');
-      const styleToken = result.tokens.find(t => t.normalizedName === 'primary/blue-style');
+      const varToken = result.tokens.find((t) => t.normalizedName === 'primary/blue-var');
+      const styleToken = result.tokens.find((t) => t.normalizedName === 'primary/blue-style');
 
       expect(varToken).toBeDefined();
       expect(styleToken).toBeDefined();
@@ -444,7 +438,7 @@ describe('resolveConflicts', () => {
       const conflicts = detectConflicts(tokens).conflicts;
       const result = resolveConflicts(tokens, conflicts, 'rename_both');
 
-      const varToken = result.tokens.find(t => t.normalizedName === 'primary/blue-var');
+      const varToken = result.tokens.find((t) => t.normalizedName === 'primary/blue-var');
       expect(varToken?.path).toEqual(['primary', 'blue-var']);
     });
   });
@@ -473,7 +467,7 @@ describe('resolveConflicts', () => {
       const conflicts = detectConflicts(tokens).conflicts;
       const result = resolveConflicts(tokens, conflicts, 'manual');
 
-      const resolvedToken = result.tokens.find(t => t.normalizedName === 'primary/blue');
+      const resolvedToken = result.tokens.find((t) => t.normalizedName === 'primary/blue');
       expect(resolvedToken?.resolutionStrategy).toBe('manual');
       expect(resolvedToken?.wasConflicted).toBe(true);
     });
@@ -503,7 +497,7 @@ describe('resolveConflicts', () => {
     const result = resolveConflicts(tokens, conflicts, 'variables_priority');
 
     expect(result.warnings.length).toBeGreaterThan(0);
-    expect(result.warnings.some(w => w.includes('Resolved conflict'))).toBe(true);
+    expect(result.warnings.some((w) => w.includes('Resolved conflict'))).toBe(true);
   });
 
   it('should create audit trail for resolutions', () => {
@@ -558,7 +552,7 @@ describe('resolveConflicts', () => {
     const conflicts = detectConflicts(tokens).conflicts;
     const result = resolveConflicts(tokens, conflicts, 'variables_priority');
 
-    const resolvedToken = result.tokens.find(t => t.wasConflicted);
+    const resolvedToken = result.tokens.find((t) => t.wasConflicted);
     expect(resolvedToken?.conflictDetails).toBeDefined();
     expect(resolvedToken?.conflictDetails?.name).toBe('primary/blue');
   });
@@ -683,7 +677,7 @@ describe('Edge Cases', () => {
     const result = detectConflicts(tokens);
 
     // Should find near duplicate
-    const nearDuplicate = result.conflicts.find(c => c.type === 'near_duplicate');
+    const nearDuplicate = result.conflicts.find((c) => c.type === 'near_duplicate');
     expect(nearDuplicate).toBeDefined();
   });
 
@@ -709,7 +703,7 @@ describe('Edge Cases', () => {
 
     const result = detectConflicts(tokens);
 
-    const nearDuplicates = result.conflicts.filter(c => c.type === 'near_duplicate');
+    const nearDuplicates = result.conflicts.filter((c) => c.type === 'near_duplicate');
     expect(nearDuplicates).toHaveLength(0);
   });
 });

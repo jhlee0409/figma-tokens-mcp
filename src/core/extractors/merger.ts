@@ -14,7 +14,7 @@
  * - Generates comprehensive warnings
  */
 
-import { normalizeTokens, GenericToken, NormalizationResult } from '../analyzers/normalizer';
+import { normalizeTokens, GenericToken } from '../analyzers/normalizer';
 import {
   detectConflicts,
   resolveConflicts,
@@ -24,7 +24,7 @@ import {
 } from '../analyzers/conflict-resolver';
 import { detectPatterns, DetectedPattern } from '../analyzers/pattern-detector';
 import { VariablesExtractionResult, ExtractedVariable } from './variables-extractor';
-import { ExtractedStyles, ColorToken, TypographyToken } from './styles-extractor';
+import { ExtractedStyles } from './styles-extractor';
 
 // ============================================================================
 // Types
@@ -156,7 +156,8 @@ function mergeVariablesOnly(
   const genericTokens = convertVariablesToGeneric(variablesResult.variables);
 
   // Use the pattern from Variables result or detect it
-  const pattern = variablesResult.pattern ?? detectPatterns(genericTokens.map(t => t.name)).recommendedPattern!;
+  const pattern =
+    variablesResult.pattern ?? detectPatterns(genericTokens.map((t) => t.name)).recommendedPattern!;
 
   // Normalize tokens
   const normalized = normalizeTokens(genericTokens, {
@@ -168,7 +169,7 @@ function mergeVariablesOnly(
   warnings.push(...normalized.warnings);
 
   // No conflicts in single-source mode
-  const resolvedTokens: ResolvedToken[] = normalized.tokens.map(t => ({
+  const resolvedTokens: ResolvedToken[] = normalized.tokens.map((t) => ({
     ...t,
     wasConflicted: false,
   }));
@@ -203,7 +204,7 @@ function mergeStylesOnly(
   const genericTokens = convertStylesToGeneric(stylesResult);
 
   // Detect pattern from style names
-  const pattern = detectPatterns(genericTokens.map(t => t.name)).recommendedPattern!;
+  const pattern = detectPatterns(genericTokens.map((t) => t.name)).recommendedPattern!;
 
   // Normalize tokens
   const normalized = normalizeTokens(genericTokens, {
@@ -215,7 +216,7 @@ function mergeStylesOnly(
   warnings.push(...normalized.warnings);
 
   // No conflicts in single-source mode
-  const resolvedTokens: ResolvedToken[] = normalized.tokens.map(t => ({
+  const resolvedTokens: ResolvedToken[] = normalized.tokens.map((t) => ({
     ...t,
     wasConflicted: false,
   }));
@@ -296,7 +297,7 @@ function mergeBothSources(
   // Detect pattern from all token names
   const pattern =
     variablesResult?.pattern ??
-    detectPatterns(genericTokens.map(t => t.name)).recommendedPattern!;
+    detectPatterns(genericTokens.map((t) => t.name)).recommendedPattern!;
 
   // Normalize all tokens
   const normalized = normalizeTokens(genericTokens, {
@@ -335,8 +336,8 @@ function mergeBothSources(
       variableTokens: variableCount,
       styleTokens: styleCount,
       conflicts: conflictDetection.conflicts.length,
-      resolved: resolution.auditTrail.filter(a => a.result !== 'manual_required').length,
-      unresolved: resolution.auditTrail.filter(a => a.result === 'manual_required').length,
+      resolved: resolution.auditTrail.filter((a) => a.result !== 'manual_required').length,
+      unresolved: resolution.auditTrail.filter((a) => a.result === 'manual_required').length,
     },
   };
 }
@@ -349,7 +350,7 @@ function mergeBothSources(
  * Converts Variables to GenericTokens
  */
 function convertVariablesToGeneric(variables: ExtractedVariable[]): GenericToken[] {
-  return variables.map(v => ({
+  return variables.map((v) => ({
     name: v.name,
     value: v.value,
     type: v.type.toLowerCase(),
@@ -417,6 +418,7 @@ function buildFinalHierarchy(tokens: ResolvedToken[]): Record<string, unknown> {
     // Navigate/create the hierarchy
     for (let i = 0; i < token.path.length - 1; i++) {
       const segment = token.path[i];
+      if (!segment) continue;
 
       if (!current[segment]) {
         current[segment] = {};
@@ -427,6 +429,7 @@ function buildFinalHierarchy(tokens: ResolvedToken[]): Record<string, unknown> {
 
     // Set the leaf value
     const leafKey = token.path[token.path.length - 1];
+    if (!leafKey) continue;
     current[leafKey] = {
       value: token.value,
       type: token.type,
@@ -505,10 +508,13 @@ export function getMergeStatistics(result: MergedTokensResult): string {
   if (conflicts.length > 0) {
     lines.push('');
     lines.push('Conflict breakdown:');
-    const byType = conflicts.reduce((acc, c) => {
-      acc[c.type] = (acc[c.type] ?? 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const byType = conflicts.reduce(
+      (acc, c) => {
+        acc[c.type] = (acc[c.type] ?? 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     for (const [type, count] of Object.entries(byType)) {
       lines.push(`  ${type}: ${count}`);

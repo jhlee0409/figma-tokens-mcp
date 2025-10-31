@@ -153,8 +153,9 @@ export function normalizeTokens(
     try {
       // Apply custom rule if exists
       let name = token.name;
-      if (opts.customRules[name]) {
-        name = opts.customRules[name];
+      const customRule = opts.customRules[name];
+      if (customRule) {
+        name = customRule;
         warnings.push(`Applied custom rule: ${token.name} -> ${name}`);
       }
 
@@ -219,11 +220,11 @@ export function normalizeTokenName(name: string, pattern: DetectedPattern): stri
     // Handle camelCase/PascalCase
     segments = splitCamelCase(name);
   } else {
-    segments = name.split(currentSeparator).filter(s => s.length > 0);
+    segments = name.split(currentSeparator).filter((s) => s.length > 0);
   }
 
   // Apply case transformation
-  segments = segments.map(segment => applyCaseStyle(segment, pattern.case));
+  segments = segments.map((segment) => applyCaseStyle(segment, pattern.case));
 
   // Join with target separator
   if (pattern.separator === 'none') {
@@ -258,7 +259,7 @@ function splitCamelCase(name: string): string[] {
     .replace(/([A-Z])/g, ' $1')
     .replace(/([a-zA-Z])(\d)/g, '$1 $2')
     .trim();
-  return withSpaces.split(/\s+/).filter(s => s.length > 0);
+  return withSpaces.split(/\s+/).filter((s) => s.length > 0);
 }
 
 /**
@@ -287,16 +288,19 @@ function joinToCamelCase(segments: string[], caseStyle: DetectedPattern['case'])
   if (segments.length === 0) return '';
 
   if (caseStyle === 'pascal') {
-    return segments
-      .map(s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
-      .join('');
+    return segments.map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()).join('');
   } else {
     // camelCase
-    return segments[0].toLowerCase() +
+    const firstSegment = segments[0];
+    if (!firstSegment) return '';
+
+    return (
+      firstSegment.toLowerCase() +
       segments
         .slice(1)
-        .map(s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
-        .join('');
+        .map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
+        .join('')
+    );
   }
 }
 
@@ -308,7 +312,7 @@ function getPathSegments(normalizedName: string, pattern: DetectedPattern): stri
     return splitCamelCase(normalizedName);
   }
 
-  return normalizedName.split(pattern.separator).filter(s => s.length > 0);
+  return normalizedName.split(pattern.separator).filter((s) => s.length > 0);
 }
 
 /**
@@ -365,6 +369,7 @@ export function buildHierarchy(tokens: NormalizedToken[]): TokenHierarchy {
     // Navigate/create the hierarchy
     for (let i = 0; i < token.path.length - 1; i++) {
       const segment = token.path[i];
+      if (!segment) continue;
 
       if (!current[segment]) {
         current[segment] = { children: {} };
@@ -379,6 +384,7 @@ export function buildHierarchy(tokens: NormalizedToken[]): TokenHierarchy {
 
     // Set the leaf value
     const leafKey = token.path[token.path.length - 1];
+    if (!leafKey) continue;
     current[leafKey] = {
       value: token.value,
       type: token.type,
@@ -398,10 +404,7 @@ export function buildHierarchy(tokens: NormalizedToken[]): TokenHierarchy {
  * @param separator - Separator to use when joining path segments (default: '/')
  * @returns Flat list of tokens
  */
-export function flattenHierarchy(
-  hierarchy: TokenHierarchy,
-  separator = '/'
-): NormalizedToken[] {
+export function flattenHierarchy(hierarchy: TokenHierarchy, separator = '/'): NormalizedToken[] {
   const tokens: NormalizedToken[] = [];
 
   function traverse(node: TokenHierarchy, path: string[] = []): void {
@@ -442,10 +445,7 @@ export function flattenHierarchy(
  * @param targetPattern - Target pattern to transform to
  * @returns Transformed structure as array of path segments
  */
-export function transformTokenStructure(
-  name: string,
-  targetPattern: DetectedPattern
-): string[] {
+export function transformTokenStructure(name: string, targetPattern: DetectedPattern): string[] {
   const normalizedName = normalizeTokenName(name, targetPattern);
   return getPathSegments(normalizedName, targetPattern);
 }

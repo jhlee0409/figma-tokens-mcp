@@ -8,7 +8,6 @@ import {
   quickMerge,
   mergeWithStrategy,
   getMergeStatistics,
-  MergeMode,
 } from '@/core/extractors/merger';
 import { VariablesExtractionResult } from '@/core/extractors/variables-extractor';
 import { ExtractedStyles } from '@/core/extractors/styles-extractor';
@@ -129,7 +128,7 @@ describe('mergeTokens', () => {
         mode: 'variables_only',
       });
 
-      const token = result.tokens.find(t => t.originalName === 'primary/blue');
+      const token = result.tokens.find((t) => t.originalName === 'primary/blue');
       expect(token?.normalizedName).toBe('primary/blue');
       expect(token?.value).toBe('#0080ff');
       expect(token?.type).toBe('color');
@@ -161,8 +160,8 @@ describe('mergeTokens', () => {
         mode: 'styles_only',
       });
 
-      const colorToken = result.tokens.find(t => t.type === 'color');
-      const typographyToken = result.tokens.find(t => t.type === 'typography');
+      const colorToken = result.tokens.find((t) => t.type === 'color');
+      const typographyToken = result.tokens.find((t) => t.type === 'typography');
 
       expect(colorToken).toBeDefined();
       expect(typographyToken).toBeDefined();
@@ -187,7 +186,7 @@ describe('mergeTokens', () => {
 
       // primary-blue exists in both sources with different values
       expect(result.conflicts.length).toBeGreaterThan(0);
-      const conflict = result.conflicts.find(c => c.name.includes('primary'));
+      const conflict = result.conflicts.find((c) => c.name.includes('primary'));
       expect(conflict).toBeDefined();
     });
 
@@ -200,7 +199,7 @@ describe('mergeTokens', () => {
 
       // Check that variable value is preferred
       const primaryBlueToken = result.tokens.find(
-        t => t.normalizedName.includes('primary') && t.normalizedName.includes('blue')
+        (t) => t.normalizedName.includes('primary') && t.normalizedName.includes('blue')
       );
       if (primaryBlueToken?.wasConflicted) {
         expect(primaryBlueToken.source).toBe('variable');
@@ -222,11 +221,11 @@ describe('mergeTokens', () => {
       });
 
       // secondary/red only in variables
-      const secondaryRed = result.tokens.find(t => t.originalName === 'secondary/red');
+      const secondaryRed = result.tokens.find((t) => t.originalName === 'secondary/red');
       expect(secondaryRed).toBeDefined();
 
       // tertiary-green only in styles
-      const tertiaryGreen = result.tokens.find(t => t.originalName === 'Tertiary Green');
+      const tertiaryGreen = result.tokens.find((t) => t.originalName === 'Tertiary Green');
       expect(tertiaryGreen).toBeDefined();
     });
 
@@ -294,8 +293,8 @@ describe('mergeTokens', () => {
       expect(result.resolutionStrategy).toBe('rename_both');
 
       // Check if both versions exist with suffixes
-      const varToken = result.tokens.find(t => t.normalizedName.includes('-var'));
-      const styleToken = result.tokens.find(t => t.normalizedName.includes('-style'));
+      const varToken = result.tokens.find((t) => t.normalizedName.includes('-var'));
+      const styleToken = result.tokens.find((t) => t.normalizedName.includes('-style'));
 
       if (result.conflicts.length > 0) {
         expect(varToken || styleToken).toBeDefined();
@@ -320,7 +319,7 @@ describe('mergeTokens', () => {
       expect(result.resolutionStrategy).toBe('manual');
 
       // Check if any token is marked for manual resolution
-      const manualToken = result.tokens.find(t => t.resolutionStrategy === 'manual');
+      const manualToken = result.tokens.find((t) => t.resolutionStrategy === 'manual');
       if (result.conflicts.length > 0) {
         expect(manualToken).toBeDefined();
       }
@@ -333,7 +332,7 @@ describe('mergeTokens', () => {
         mode: 'merge',
       });
 
-      const token = result.tokens.find(t => t.source === 'variable');
+      const token = result.tokens.find((t) => t.source === 'variable');
       expect(token?.metadata).toBeDefined();
     });
 
@@ -343,7 +342,7 @@ describe('mergeTokens', () => {
         preserveMetadata: false,
       });
 
-      const token = result.tokens.find(t => t.source === 'variable');
+      const token = result.tokens.find((t) => t.source === 'variable');
       expect(token?.metadata).toBeUndefined();
     });
   });
@@ -358,7 +357,7 @@ describe('mergeTokens', () => {
       });
 
       // Check if the custom rule was applied (should show in warnings)
-      const hasCustomRuleWarning = result.warnings.some(w => w.includes('custom rule'));
+      const hasCustomRuleWarning = result.warnings.some((w) => w.includes('custom rule'));
       if (hasCustomRuleWarning) {
         expect(hasCustomRuleWarning).toBe(true);
       }
@@ -463,13 +462,9 @@ describe('mergeWithStrategy', () => {
   });
 
   it('should work with all strategy types', () => {
-    const strategies: Array<'variables_priority' | 'styles_priority' | 'newest' | 'rename_both' | 'manual'> = [
-      'variables_priority',
-      'styles_priority',
-      'newest',
-      'rename_both',
-      'manual',
-    ];
+    const strategies: Array<
+      'variables_priority' | 'styles_priority' | 'newest' | 'rename_both' | 'manual'
+    > = ['variables_priority', 'styles_priority', 'newest', 'rename_both', 'manual'];
 
     for (const strategy of strategies) {
       const result = mergeWithStrategy(mockVariablesResult, undefined, strategy);
@@ -684,7 +679,7 @@ describe('Edge Cases', () => {
 
     const result = mergeTokens(undefined, typographyStyles, { mode: 'styles_only' });
 
-    const token = result.tokens.find(t => t.type === 'typography');
+    const token = result.tokens.find((t) => t.type === 'typography');
     expect(token).toBeDefined();
     expect(token?.value).toBeDefined();
   });

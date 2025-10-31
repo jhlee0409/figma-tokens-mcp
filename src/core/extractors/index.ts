@@ -90,14 +90,5 @@ export type {
 /**
  * Token Merger exports
  */
-export {
-  mergeTokens,
-  quickMerge,
-  mergeWithStrategy,
-  getMergeStatistics,
-} from './merger';
-export type {
-  MergeMode,
-  MergerOptions,
-  MergedTokensResult,
-} from './merger';
+export { mergeTokens, quickMerge, mergeWithStrategy, getMergeStatistics } from './merger';
+export type { MergeMode, MergerOptions, MergedTokensResult } from './merger';

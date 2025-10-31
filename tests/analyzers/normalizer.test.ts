@@ -479,8 +479,16 @@ describe('transformTokenStructure', () => {
       examples: [],
     };
 
-    expect(transformTokenStructure('primary/blue/500', pattern)).toEqual(['primary', 'blue', '500']);
-    expect(transformTokenStructure('primary-blue-500', pattern)).toEqual(['primary', 'blue', '500']);
+    expect(transformTokenStructure('primary/blue/500', pattern)).toEqual([
+      'primary',
+      'blue',
+      '500',
+    ]);
+    expect(transformTokenStructure('primary-blue-500', pattern)).toEqual([
+      'primary',
+      'blue',
+      '500',
+    ]);
     expect(transformTokenStructure('PrimaryBlue500', pattern)).toEqual(['primary', 'blue', '500']);
   });
 

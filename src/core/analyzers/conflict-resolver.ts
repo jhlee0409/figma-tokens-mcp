@@ -216,16 +216,21 @@ export function detectConflicts(tokens: NormalizedToken[]): ConflictDetectionRes
 function analyzeConflict(name: string, tokens: NormalizedToken[]): ConflictReport | null {
   if (tokens.length < 2) return null;
 
-  const sources: ConflictSource[] = tokens.map(t => ({
-    type: t.source,
-    value: t.value,
-    tokenType: t.type,
-    originalName: t.originalName,
-    metadata: t.metadata,
-  }));
+  const sources: ConflictSource[] = tokens.map((t) => {
+    const source: ConflictSource = {
+      type: t.source,
+      value: t.value,
+      tokenType: t.type,
+      originalName: t.originalName,
+    };
+    if (t.metadata !== undefined) {
+      source.metadata = t.metadata;
+    }
+    return source;
+  });
 
   // Check for type mismatch
-  const types = new Set(tokens.map(t => t.type));
+  const types = new Set(tokens.map((t) => t.type));
   if (types.size > 1) {
     return {
       type: 'type_mismatch',
@@ -237,22 +242,24 @@ function analyzeConflict(name: string, tokens: NormalizedToken[]): ConflictRepor
   }
 
   // Check if values are different
-  const values = tokens.map(t => JSON.stringify(t.value));
+  const values = tokens.map((t) => JSON.stringify(t.value));
   const uniqueValues = new Set(values);
 
   if (uniqueValues.size > 1) {
     // Different values - this is a duplicate name conflict
-    const hasVariableSource = tokens.some(t => t.source === 'variable');
-    const hasStyleSource = tokens.some(t => t.source === 'style');
+    const hasVariableSource = tokens.some((t) => t.source === 'variable');
+    const hasStyleSource = tokens.some((t) => t.source === 'style');
 
     let severity: ConflictSeverity = 'medium';
     let recommendation = 'Values differ. ';
 
     if (hasVariableSource && hasStyleSource) {
       severity = 'high';
-      recommendation += 'Figma recommends using Variables. Consider using "variables_priority" strategy.';
+      recommendation +=
+        'Figma recommends using Variables. Consider using "variables_priority" strategy.';
     } else {
-      recommendation += 'Both tokens are from the same source. This may indicate a normalization issue.';
+      recommendation +=
+        'Both tokens are from the same source. This may indicate a normalization issue.';
     }
 
     return {
@@ -279,36 +286,47 @@ function analyzeConflict(name: string, tokens: NormalizedToken[]): ConflictRepor
  */
 function findNearDuplicates(tokens: NormalizedToken[]): ConflictReport[] {
   const conflicts: ConflictReport[] = [];
-  const names = tokens.map(t => t.normalizedName);
+  const names = tokens.map((t) => t.normalizedName);
 
   for (let i = 0; i < names.length; i++) {
     for (let j = i + 1; j < names.length; j++) {
-      const similarity = calculateSimilarity(names[i], names[j]);
+      const name1 = names[i];
+      const name2 = names[j];
+      if (!name1 || !name2) continue;
+
+      const similarity = calculateSimilarity(name1, name2);
 
       // If names are very similar (>80% match), flag as near duplicate
       if (similarity > 0.8 && similarity < 1.0) {
         const token1 = tokens[i];
         const token2 = tokens[j];
 
+        if (!token1 || !token2) continue;
+
+        const source1: ConflictSource = {
+          type: token1.source,
+          value: token1.value,
+          tokenType: token1.type,
+          originalName: token1.originalName,
+        };
+        if (token1.metadata !== undefined) {
+          source1.metadata = token1.metadata;
+        }
+
+        const source2: ConflictSource = {
+          type: token2.source,
+          value: token2.value,
+          tokenType: token2.type,
+          originalName: token2.originalName,
+        };
+        if (token2.metadata !== undefined) {
+          source2.metadata = token2.metadata;
+        }
+
         conflicts.push({
           type: 'near_duplicate',
-          name: `${names[i]} / ${names[j]}`,
-          sources: [
-            {
-              type: token1.source,
-              value: token1.value,
-              tokenType: token1.type,
-              originalName: token1.originalName,
-              metadata: token1.metadata,
-            },
-            {
-              type: token2.source,
-              value: token2.value,
-              tokenType: token2.type,
-              originalName: token2.originalName,
-              metadata: token2.metadata,
-            },
-          ],
+          name: `${name1} / ${name2}`,
+          sources: [source1, source2],
           severity: 'low',
           recommendation: `These names are very similar (${Math.round(similarity * 100)}% match). Check if one is a typo.`,
         });
@@ -343,24 +361,24 @@ function levenshteinDistance(str1: string, str2: string): number {
   }
 
   for (let j = 0; j <= str1.length; j++) {
-    matrix[0][j] = j;
+    matrix[0]![j] = j;
   }
 
   for (let i = 1; i <= str2.length; i++) {
     for (let j = 1; j <= str1.length; j++) {
       if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
-        matrix[i][j] = matrix[i - 1][j - 1];
+        matrix[i]![j] = matrix[i - 1]![j - 1]!;
       } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1, // substitution
-          matrix[i][j - 1] + 1, // insertion
-          matrix[i - 1][j] + 1 // deletion
+        matrix[i]![j] = Math.min(
+          matrix[i - 1]![j - 1]! + 1, // substitution
+          matrix[i]![j - 1]! + 1, // insertion
+          matrix[i - 1]![j]! + 1 // deletion
         );
       }
     }
   }
 
-  return matrix[str2.length][str1.length];
+  return matrix[str2.length]![str1.length]!;
 }
 
 /**
@@ -368,12 +386,12 @@ function levenshteinDistance(str1: string, str2: string): number {
  */
 function calculateStatistics(conflicts: ConflictReport[]): ConflictDetectionResult['statistics'] {
   return {
-    duplicateNames: conflicts.filter(c => c.type === 'duplicate_name').length,
-    nearDuplicates: conflicts.filter(c => c.type === 'near_duplicate').length,
-    typeMismatches: conflicts.filter(c => c.type === 'type_mismatch').length,
-    lowSeverity: conflicts.filter(c => c.severity === 'low').length,
-    mediumSeverity: conflicts.filter(c => c.severity === 'medium').length,
-    highSeverity: conflicts.filter(c => c.severity === 'high').length,
+    duplicateNames: conflicts.filter((c) => c.type === 'duplicate_name').length,
+    nearDuplicates: conflicts.filter((c) => c.type === 'near_duplicate').length,
+    typeMismatches: conflicts.filter((c) => c.type === 'type_mismatch').length,
+    lowSeverity: conflicts.filter((c) => c.severity === 'low').length,
+    mediumSeverity: conflicts.filter((c) => c.severity === 'medium').length,
+    highSeverity: conflicts.filter((c) => c.severity === 'high').length,
   };
 }
 
@@ -406,11 +424,11 @@ export function resolveConflicts(
   const resolvedTokens: ResolvedToken[] = [];
 
   // Create a map of conflicted names
-  const conflictedNames = new Set(conflicts.map(c => c.name));
+  const conflictedNames = new Set(conflicts.map((c) => c.name));
 
   // Separate conflicted and non-conflicted tokens
-  const nonConflictedTokens = tokens.filter(t => !conflictedNames.has(t.normalizedName));
-  const conflictedTokens = tokens.filter(t => conflictedNames.has(t.normalizedName));
+  const nonConflictedTokens = tokens.filter((t) => !conflictedNames.has(t.normalizedName));
+  const conflictedTokens = tokens.filter((t) => conflictedNames.has(t.normalizedName));
 
   // Add non-conflicted tokens as-is
   for (const token of nonConflictedTokens) {
@@ -443,7 +461,9 @@ export function resolveConflicts(
 
       warnings.push(`Resolved conflict for "${conflict.name}" using ${strategy} strategy`);
     } catch (error) {
-      warnings.push(`Failed to resolve conflict for "${conflict.name}": ${(error as Error).message}`);
+      warnings.push(
+        `Failed to resolve conflict for "${conflict.name}": ${(error as Error).message}`
+      );
     }
   }
 
@@ -465,7 +485,7 @@ function applyResolutionStrategy(
   allTokens: NormalizedToken[]
 ): ResolvedToken | ResolvedToken[] {
   // Get all tokens involved in this conflict
-  const conflictTokens = allTokens.filter(t => t.normalizedName === conflict.name);
+  const conflictTokens = allTokens.filter((t) => t.normalizedName === conflict.name);
 
   switch (strategy) {
     case 'variables_priority':
@@ -484,7 +504,7 @@ function applyResolutionStrategy(
       return resolveManual(conflict, conflictTokens);
 
     default:
-      throw new Error(`Unknown resolution strategy: ${strategy}`);
+      throw new Error(`Unknown resolution strategy: ${strategy as string}`);
   }
 }
 
@@ -495,7 +515,7 @@ function resolveWithVariablesPriority(
   conflict: ConflictReport,
   tokens: NormalizedToken[]
 ): ResolvedToken {
-  const variableToken = tokens.find(t => t.source === 'variable');
+  const variableToken = tokens.find((t) => t.source === 'variable');
 
   if (variableToken) {
     return {
@@ -507,8 +527,13 @@ function resolveWithVariablesPriority(
   }
 
   // Fallback to first token if no variable source
+  const firstToken = tokens[0];
+  if (!firstToken) {
+    throw new Error(`Cannot resolve conflict: no tokens provided for "${conflict.name}"`);
+  }
+
   return {
-    ...tokens[0],
+    ...firstToken,
     wasConflicted: true,
     resolutionStrategy: 'variables_priority',
     conflictDetails: conflict,
@@ -522,7 +547,7 @@ function resolveWithStylesPriority(
   conflict: ConflictReport,
   tokens: NormalizedToken[]
 ): ResolvedToken {
-  const styleToken = tokens.find(t => t.source === 'style');
+  const styleToken = tokens.find((t) => t.source === 'style');
 
   if (styleToken) {
     return {
@@ -534,8 +559,13 @@ function resolveWithStylesPriority(
   }
 
   // Fallback to first token if no style source
+  const firstToken = tokens[0];
+  if (!firstToken) {
+    throw new Error(`Cannot resolve conflict: no tokens provided for "${conflict.name}"`);
+  }
+
   return {
-    ...tokens[0],
+    ...firstToken,
     wasConflicted: true,
     resolutionStrategy: 'styles_priority',
     conflictDetails: conflict,
@@ -545,10 +575,7 @@ function resolveWithStylesPriority(
 /**
  * Resolves conflict by using the newest token (requires timestamp in metadata)
  */
-function resolveWithNewest(
-  conflict: ConflictReport,
-  tokens: NormalizedToken[]
-): ResolvedToken {
+function resolveWithNewest(conflict: ConflictReport, tokens: NormalizedToken[]): ResolvedToken {
   // Sort by timestamp if available in metadata
   const sorted = [...tokens].sort((a, b) => {
     const timeA = (a.metadata?.timestamp as number) ?? 0;
@@ -556,8 +583,13 @@ function resolveWithNewest(
     return timeB - timeA;
   });
 
+  const newestToken = sorted[0];
+  if (!newestToken) {
+    throw new Error(`Cannot resolve conflict: no tokens provided for "${conflict.name}"`);
+  }
+
   return {
-    ...sorted[0],
+    ...newestToken,
     wasConflicted: true,
     resolutionStrategy: 'newest',
     conflictDetails: conflict,
@@ -571,7 +603,7 @@ function resolveWithRenameBoth(
   conflict: ConflictReport,
   tokens: NormalizedToken[]
 ): ResolvedToken[] {
-  return tokens.map(token => {
+  return tokens.map((token) => {
     const suffix = token.source === 'variable' ? '-var' : '-style';
     return {
       ...token,
@@ -588,13 +620,15 @@ function resolveWithRenameBoth(
 /**
  * Manual resolution (requires user intervention)
  */
-function resolveManual(
-  conflict: ConflictReport,
-  tokens: NormalizedToken[]
-): ResolvedToken {
+function resolveManual(conflict: ConflictReport, tokens: NormalizedToken[]): ResolvedToken {
   // For now, return the first token and mark it as requiring manual resolution
+  const firstToken = tokens[0];
+  if (!firstToken) {
+    throw new Error(`Cannot resolve conflict: no tokens provided for "${conflict.name}"`);
+  }
+
   return {
-    ...tokens[0],
+    ...firstToken,
     wasConflicted: true,
     resolutionStrategy: 'manual',
     conflictDetails: conflict,
@@ -617,7 +651,7 @@ function getResolutionAction(strategy: ResolutionStrategyType, conflict: Conflic
     case 'manual':
       return `Marked "${conflict.name}" for manual resolution`;
     default:
-      return `Applied ${strategy} strategy to "${conflict.name}"`;
+      return `Applied ${strategy as string} strategy to "${conflict.name}"`;
   }
 }
 
@@ -626,7 +660,7 @@ function getResolutionAction(strategy: ResolutionStrategyType, conflict: Conflic
  */
 function getResolutionResult(
   strategy: ResolutionStrategyType,
-  conflict: ConflictReport
+  _conflict: ConflictReport
 ): ResolutionAudit['result'] {
   switch (strategy) {
     case 'variables_priority':
