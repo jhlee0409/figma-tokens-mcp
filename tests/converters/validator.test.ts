@@ -276,7 +276,7 @@ describe('validateTokens', () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it('should reject reserved names', () => {
+    it('should allow special color keywords as token names', () => {
       const tokens: NormalizedTokens = {
         colors: {
           inherit: '#000000',
@@ -284,9 +284,9 @@ describe('validateTokens', () => {
       };
 
       const result = validateTokens(tokens);
-      expect(result.valid).toBe(false);
-      expect(result.errors.length).toBeGreaterThan(0);
-      expect(result.errors[0]?.message).toContain('reserved');
+      // Tailwind allows overriding special color keywords
+      expect(result.valid).toBe(true);
+      expect(result.errors.length).toBe(0);
     });
   });
 

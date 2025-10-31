@@ -25,15 +25,41 @@ const CSS_UNIT_PATTERN = /^-?\d*\.?\d+(px|rem|em|%|vh|vw|vmin|vmax|ch|ex)?$/;
  * Valid font weight values
  */
 const VALID_FONT_WEIGHTS = new Set([
-  100, 200, 300, 400, 500, 600, 700, 800, 900,
-  '100', '200', '300', '400', '500', '600', '700', '800', '900',
-  'thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black',
+  100,
+  200,
+  300,
+  400,
+  500,
+  600,
+  700,
+  800,
+  900,
+  '100',
+  '200',
+  '300',
+  '400',
+  '500',
+  '600',
+  '700',
+  '800',
+  '900',
+  'thin',
+  'extralight',
+  'light',
+  'normal',
+  'medium',
+  'semibold',
+  'bold',
+  'extrabold',
+  'black',
 ]);
 
 /**
- * Reserved Tailwind names (DEFAULT is allowed)
+ * Reserved Tailwind names
+ * Note: 'transparent', 'current', 'inherit' are allowed as they are valid color keywords
+ * DEFAULT is also allowed as a special Tailwind key
  */
-const RESERVED_NAMES = new Set(['inherit', 'current', 'transparent']);
+const RESERVED_NAMES = new Set<string>([]);
 
 /**
  * Validate a color value
@@ -47,13 +73,14 @@ function validateColor(value: unknown, path: string): ValidationError | null {
     };
   }
 
-  const isValid = Object.values(COLOR_PATTERNS).some(pattern => pattern.test(value));
+  const isValid = Object.values(COLOR_PATTERNS).some((pattern) => pattern.test(value));
 
   if (!isValid) {
     return {
       path,
       message: `Invalid color format: "${value}"`,
-      suggestion: 'Use a valid CSS color format (e.g., #3B82F6, rgb(59, 130, 246), hsl(217, 91%, 60%))',
+      suggestion:
+        'Use a valid CSS color format (e.g., #3B82F6, rgb(59, 130, 246), hsl(217, 91%, 60%))',
     };
   }
 
@@ -145,7 +172,8 @@ function validateFontFamily(value: unknown, path: string): ValidationError | nul
     }
 
     for (let i = 0; i < value.length; i++) {
-      if (typeof value[i] !== 'string' || value[i].trim().length === 0) {
+      const item = value[i] as unknown;
+      if (typeof item !== 'string' || item.trim().length === 0) {
         return {
           path: `${path}[${i}]`,
           message: 'Each font family must be a non-empty string',
@@ -184,7 +212,8 @@ function validateFontWeight(value: unknown, path: string): ValidationError | nul
       return {
         path,
         message: `Invalid font weight: "${value}"`,
-        suggestion: 'Use numeric (100-900) or named values (thin, light, normal, medium, semibold, bold, extrabold, black)',
+        suggestion:
+          'Use numeric (100-900) or named values (thin, light, normal, medium, semibold, bold, extrabold, black)',
       };
     }
     return null;
@@ -341,11 +370,13 @@ export function validateTokens(tokens: NormalizedTokens): ValidationResult {
   if (typeof tokens !== 'object' || tokens === null) {
     return {
       valid: false,
-      errors: [{
-        path: 'root',
-        message: 'Tokens must be an object',
-        suggestion: 'Provide a valid token object',
-      }],
+      errors: [
+        {
+          path: 'root',
+          message: 'Tokens must be an object',
+          suggestion: 'Provide a valid token object',
+        },
+      ],
     };
   }
 

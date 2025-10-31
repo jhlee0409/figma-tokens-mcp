@@ -36,7 +36,9 @@ export function convertToTailwindV3(
 
   if (!validation.valid) {
     warnings.push(
-      ...validation.errors.map(err => `${err.path}: ${err.message}${err.suggestion ? ` (${err.suggestion})` : ''}`)
+      ...validation.errors.map(
+        (err) => `${err.path}: ${err.message}${err.suggestion ? ` (${err.suggestion})` : ''}`
+      )
     );
   }
 
@@ -64,7 +66,7 @@ export function convertToTailwindV3(
   const syntaxValidation = validateJavaScriptSyntax(configContent);
   if (!syntaxValidation.valid) {
     warnings.push(
-      ...syntaxValidation.errors.map(err => `Generated config syntax: ${err.message}`)
+      ...syntaxValidation.errors.map((err) => `Generated config syntax: ${err.message}`)
     );
   }
 
@@ -279,7 +281,7 @@ function generateFontFamilyContent(
     if (typeof value === 'string') {
       lines.push(`${indent}${safeKey}: ['${value}'],`);
     } else if (Array.isArray(value)) {
-      const families = value.map(f => `'${f}'`).join(', ');
+      const families = value.map((f) => `'${f}'`).join(', ');
       lines.push(`${indent}${safeKey}: [${families}],`);
     }
   }

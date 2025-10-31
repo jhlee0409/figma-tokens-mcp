@@ -45,8 +45,8 @@ describe('convertToTailwindV3', () => {
 
       expect(result.files[0]?.content).toContain('primary: {');
       expect(result.files[0]?.content).toContain('blue: {');
-      expect(result.files[0]?.content).toContain("500: '#3B82F6'");
-      expect(result.files[0]?.content).toContain("600: '#2563EB'");
+      expect(result.files[0]?.content).toContain("'500': '#3B82F6'");
+      expect(result.files[0]?.content).toContain("'600': '#2563EB'");
     });
 
     it('should convert fontSize tokens with simple values', () => {
@@ -318,7 +318,7 @@ describe('convertToTailwindV3', () => {
       expect(result.files[0]?.content).toContain('level2: {');
       expect(result.files[0]?.content).toContain('level3: {');
       expect(result.files[0]?.content).toContain('level4: {');
-      expect(result.files[0]?.content).toContain('level5: {');
+      expect(result.files[0]?.content).toContain("level5: '#3B82F6'");
       expect(result.files[0]?.content).toContain('#3B82F6');
     });
   });

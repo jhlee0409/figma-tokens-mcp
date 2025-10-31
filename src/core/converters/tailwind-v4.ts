@@ -37,7 +37,9 @@ export function convertToTailwindV4(
 
   if (!validation.valid) {
     warnings.push(
-      ...validation.errors.map(err => `${err.path}: ${err.message}${err.suggestion ? ` (${err.suggestion})` : ''}`)
+      ...validation.errors.map(
+        (err) => `${err.path}: ${err.message}${err.suggestion ? ` (${err.suggestion})` : ''}`
+      )
     );
   }
 
@@ -67,9 +69,7 @@ export function convertToTailwindV4(
   // Validate generated syntax
   const cssValidation = validateCSSSyntax(cssContent);
   if (!cssValidation.valid) {
-    warnings.push(
-      ...cssValidation.errors.map(err => `Generated CSS syntax: ${err.message}`)
-    );
+    warnings.push(...cssValidation.errors.map((err) => `Generated CSS syntax: ${err.message}`));
   }
 
   // Create file objects
@@ -157,7 +157,9 @@ function generateV4CSS(tokens: NormalizedTokens, options: ConversionOptions): st
   for (const [category, value] of Object.entries(tokens)) {
     if (!handledCategories.has(category) && value && typeof value === 'object') {
       variables.push(`  /* ${capitalizeFirst(category)} */`);
-      variables.push(...generateGenericVariables(value as TokenObject, category, options.cssPrefix || ''));
+      variables.push(
+        ...generateGenericVariables(value as TokenObject, category, options.cssPrefix || '')
+      );
       variables.push('');
     }
   }

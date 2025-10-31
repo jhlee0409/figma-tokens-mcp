@@ -40,7 +40,9 @@ export type FontWeightValue = number | string;
 /**
  * Font size token type
  */
-export type FontSizeValue = string | { fontSize: string; lineHeight?: string; letterSpacing?: string };
+export type FontSizeValue =
+  | string
+  | { fontSize: string; lineHeight?: string; letterSpacing?: string };
 
 /**
  * Normalized token structure

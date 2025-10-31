@@ -19,7 +19,7 @@ describe('convertToTailwindV4', () => {
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
       expect(result.files).toHaveLength(2);
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile).toBeDefined();
       expect(cssFile?.content).toContain('@theme');
       expect(cssFile?.content).toContain('--color-primary: #3B82F6;');
@@ -41,7 +41,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('--color-primary-blue-500: #3B82F6;');
       expect(cssFile?.content).toContain('--color-primary-blue-600: #2563EB;');
     });
@@ -57,7 +57,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('--font-size-sm: 0.875rem;');
       expect(cssFile?.content).toContain('--font-size-base: 1rem;');
       expect(cssFile?.content).toContain('--font-size-lg: 1.125rem;');
@@ -75,7 +75,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('--font-size-sm: 0.875rem;');
       expect(cssFile?.content).toContain('--line-height-sm: 1.25rem;');
     });
@@ -93,7 +93,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('--font-size-sm: 0.875rem;');
       expect(cssFile?.content).toContain('--line-height-sm: 1.25rem;');
       expect(cssFile?.content).toContain('--letter-spacing-sm: 0.01em;');
@@ -108,7 +108,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('--font-family-sans: Inter, system-ui, sans-serif;');
     });
 
@@ -121,7 +121,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('--font-family-sans: Inter, system-ui, sans-serif;');
     });
 
@@ -137,7 +137,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('--font-weight-thin: 100;');
       expect(cssFile?.content).toContain('--font-weight-normal: 400;');
       expect(cssFile?.content).toContain('--font-weight-bold: 700;');
@@ -159,7 +159,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('--color-primary-blue-500');
     });
 
@@ -172,7 +172,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('--font-size-text-sm');
     });
 
@@ -185,7 +185,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { cssPrefix: 'custom-' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('--custom-color-primary');
     });
   });
@@ -201,7 +201,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('0.875rem'); // 14px / 16 = 0.875rem
       expect(cssFile?.content).toContain('1rem'); // 16px / 16 = 1rem
     });
@@ -215,7 +215,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('0.875rem');
     });
 
@@ -228,7 +228,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('1.2em');
     });
 
@@ -242,7 +242,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { preset: 'merge' });
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('0.5rem'); // 8px / 16 = 0.5rem
       expect(cssFile?.content).toContain('1rem'); // 16px / 16 = 1rem
     });
@@ -258,7 +258,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens);
 
-      const configFile = result.files.find(f => f.name === 'tailwind.config.ts');
+      const configFile = result.files.find((f) => f.name === 'tailwind.config.ts');
       expect(configFile).toBeDefined();
       expect(configFile?.language).toBe('typescript');
       expect(configFile?.content).toContain("import type { Config } from 'tailwindcss'");
@@ -275,7 +275,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens, { typescript: false });
 
-      const configFile = result.files.find(f => f.name === 'tailwind.config.js');
+      const configFile = result.files.find((f) => f.name === 'tailwind.config.js');
       expect(configFile).toBeDefined();
       expect(configFile?.language).toBe('javascript');
       expect(configFile?.content).toContain('module.exports = {');
@@ -291,7 +291,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens);
 
-      const configFile = result.files.find(f => f.name === 'tailwind.config.ts');
+      const configFile = result.files.find((f) => f.name === 'tailwind.config.ts');
       expect(configFile?.content).toContain('content: [');
       expect(configFile?.content).toContain('./src/**/*.{js,ts,jsx,tsx,mdx}');
     });
@@ -307,7 +307,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens);
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('@import "tailwindcss"');
     });
 
@@ -320,7 +320,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens);
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('@theme {');
     });
 
@@ -336,7 +336,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens);
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('/* Colors */');
       expect(cssFile?.content).toContain('/* Font Sizes */');
     });
@@ -350,7 +350,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens);
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('/**');
       expect(cssFile?.content).toContain('Tailwind CSS v4 Design Tokens');
       expect(cssFile?.content).toContain('@generated');
@@ -376,7 +376,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens);
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('--color-primary');
       expect(cssFile?.content).toContain('--font-size-sm');
       expect(cssFile?.content).toContain('--font-family-sans');
@@ -397,7 +397,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens);
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('/* Spacing */');
       expect(cssFile?.content).toContain('--spacing-sm');
       expect(cssFile?.content).toContain('/* BorderRadius */');
@@ -412,7 +412,7 @@ describe('convertToTailwindV4', () => {
       const result = convertToTailwindV4(tokens);
 
       expect(result.files).toHaveLength(2);
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('@theme');
       expect(result.summary.tokensConverted).toBe(0);
     });
@@ -434,7 +434,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens);
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('--color-level1-level2-level3-level4-level5');
     });
 
@@ -449,7 +449,7 @@ describe('convertToTailwindV4', () => {
 
       const result = convertToTailwindV4(tokens);
 
-      const cssFile = result.files.find(f => f.name === 'design-tokens.css');
+      const cssFile = result.files.find((f) => f.name === 'design-tokens.css');
       expect(cssFile?.content).toContain('--spacing-0');
       expect(cssFile?.content).toContain('--spacing-1');
       expect(cssFile?.content).toContain('--spacing-2');
