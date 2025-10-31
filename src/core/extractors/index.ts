@@ -86,3 +86,9 @@ export type {
   VariablesExtractionResult,
   VariableExtractionOptions,
 } from './variables-extractor';
+
+/**
+ * Token Merger exports
+ */
+export { mergeTokens, quickMerge, mergeWithStrategy, getMergeStatistics } from './merger';
+export type { MergeMode, MergerOptions, MergedTokensResult } from './merger';
