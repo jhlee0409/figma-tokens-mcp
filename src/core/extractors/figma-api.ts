@@ -283,22 +283,31 @@ export class FigmaAPIClient {
       throw error;
     }
 
-    const config = error.config as typeof error.config & { retryCount?: number };
-    const retryCount = config.retryCount ?? 0;
-    config.retryCount = retryCount + 1;
+    // Store retry count separately to avoid modifying config
+    const configWithRetry = error.config as typeof error.config & { retryCount?: number };
+    const retryCount = configWithRetry.retryCount ?? 0;
+    const newRetryCount = retryCount + 1;
 
     const delay = this.config.initialRetryDelay * Math.pow(2, retryCount);
     this.logger.debug(
-      `Retrying request (attempt ${config.retryCount}/${this.config.maxRetries}) after ${delay}ms`
+      `Retrying request (attempt ${newRetryCount}/${this.config.maxRetries}) after ${delay}ms`
     );
 
     await this.sleep(delay);
 
     try {
-      const response = await this.client.request(config);
+      // Create a new config object without retryCount for the actual request
+      const { retryCount: _, ...cleanConfig } = configWithRetry;
+      const response = await this.client.request(cleanConfig);
+      // Update retry count for potential future retries
+      (response.config as typeof configWithRetry).retryCount = newRetryCount;
       return response.data;
     } catch (retryError) {
       if (axios.isAxiosError(retryError)) {
+        // Pass the retry count to the error config
+        if (retryError.config) {
+          (retryError.config as typeof configWithRetry).retryCount = newRetryCount;
+        }
         return this.handleError(retryError);
       }
       throw retryError;
@@ -309,7 +318,7 @@ export class FigmaAPIClient {
    * Sleep utility for delays
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => globalThis.setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
