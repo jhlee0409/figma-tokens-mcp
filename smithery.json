@@ -1,5 +1,4 @@
 {
-  "main": "dist/mcp/server.js",
   "config": {
     "type": "object",
     "title": "Figma Tokens MCP Configuration",

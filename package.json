@@ -4,7 +4,7 @@
   "description": "Model Context Protocol (MCP) server for extracting design tokens from Figma and generating Tailwind CSS configurations",
   "type": "module",
   "main": "dist/index.js",
-  "module": "src/index.ts",
+  "module": "src/mcp/server.ts",
   "types": "dist/index.d.ts",
   "bin": {
     "figma-tokens-mcp": "dist/mcp/server.js"
