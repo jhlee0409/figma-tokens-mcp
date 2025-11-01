@@ -76,12 +76,25 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that a
 
 ### ⚡ 설치 방법 선택
 
-#### 옵션 1: 원클릭 설치 (stdio)
+#### 옵션 1: **Vercel 배포** (가장 추천! 🚀)
 ```bash
-npx @jhlee0409/figma-tokens-mcp install --figma-token YOUR_FIGMA_TOKEN
+# 1. Vercel에 배포
+vercel
+
+# 2. 환경 변수 설정
+vercel env add FIGMA_ACCESS_TOKEN
+
+# 3. Claude Code에서 사용
+claude mcp add figma-tokens-mcp \
+  "https://your-project.vercel.app/api/mcp" \
+  --transport http
 ```
 
-#### 옵션 2: Claude Code (HTTP - 추천!)
+> ✨ **장점**: 환경 변수만 설정하면 끝! 헤더 설정 불필요, 무료 배포, 팀 공유 용이
+
+[상세 배포 가이드 보기](VERCEL_DEPLOY.md)
+
+#### 옵션 2: Smithery (HTTP)
 ```bash
 claude mcp add figma-tokens-mcp \
   "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp" \
@@ -89,7 +102,10 @@ claude mcp add figma-tokens-mcp \
   --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
 ```
 
-> 💡 HTTP transport는 팀 공유에 최적화되어 있으며, 별도 설정 없이 즉시 사용 가능합니다!
+#### 옵션 3: 로컬 설치 (stdio)
+```bash
+npx @jhlee0409/figma-tokens-mcp install --figma-token YOUR_FIGMA_TOKEN
+```
 
 <details>
 <summary>더 많은 설치 방법 보기</summary>

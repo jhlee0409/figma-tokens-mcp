@@ -4,13 +4,34 @@ Figma Tokens MCP를 설치하는 다양한 방법을 제공합니다.
 
 ## 🚀 빠른 설치
 
-### 방법 1: 원클릭 설치 (가장 간단!)
+### 방법 1: **Vercel 배포** (가장 추천!)
 
 ```bash
-npx @jhlee0409/figma-tokens-mcp install --figma-token YOUR_FIGMA_TOKEN
+# 1. Vercel CLI 설치
+npm i -g vercel
+
+# 2. 프로젝트 배포
+vercel
+
+# 3. 환경 변수 설정
+vercel env add FIGMA_ACCESS_TOKEN
+
+# 4. Claude Code에서 사용
+claude mcp add figma-tokens-mcp \
+  "https://your-project.vercel.app/api/mcp" \
+  --transport http
 ```
 
-### 방법 2: Claude Code MCP (HTTP Transport)
+**장점:**
+- ✅ 헤더 설정 불필요 (환경 변수로 자동 처리)
+- ✅ 무료 배포 가능
+- ✅ 자동 HTTPS
+- ✅ 팀 공유 용이
+- ✅ GitHub 자동 배포 지원
+
+[상세 가이드: VERCEL_DEPLOY.md](VERCEL_DEPLOY.md)
+
+### 방법 2: Smithery (HTTP Transport)
 
 ```bash
 claude mcp add figma-tokens-mcp \
@@ -19,7 +40,11 @@ claude mcp add figma-tokens-mcp \
   --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
 ```
 
-> 💡 HTTP transport는 표준 `Authorization: Bearer` 헤더를 사용합니다.
+### 방법 3: 로컬 설치 (stdio)
+
+```bash
+npx @jhlee0409/figma-tokens-mcp install --figma-token YOUR_FIGMA_TOKEN
+```
 
 ### 방법 3: Smithery CLI + Interactive Setup
 
