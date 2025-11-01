@@ -12,6 +12,8 @@ import {
   ListToolsRequestSchema,
   ListPromptsRequestSchema,
   GetPromptRequestSchema,
+  ListResourcesRequestSchema,
+  ReadResourceRequestSchema,
   Tool,
 } from '@modelcontextprotocol/sdk/types.js';
 import type {
@@ -52,6 +54,7 @@ export function createServer(config: ServerConfig = {}): Server {
       capabilities: {
         tools: {},
         prompts: {},
+        resources: {},
       },
     }
   );
@@ -66,6 +69,197 @@ export function createServer(config: ServerConfig = {}): Server {
       error: (msg, err?) => logger.error(msg, err),
     },
   };
+
+  // List available resources
+  server.setRequestHandler(ListResourcesRequestSchema, () => {
+    return {
+      resources: [
+        {
+          uri: 'figma-tokens://setup-guide',
+          name: 'Setup Guide',
+          description: 'Step-by-step guide to set up and use Figma Tokens MCP',
+          mimeType: 'text/markdown',
+        },
+        {
+          uri: 'figma-tokens://api-reference',
+          name: 'API Reference',
+          description: 'Complete reference for all available tools and their parameters',
+          mimeType: 'text/markdown',
+        },
+        {
+          uri: 'figma-tokens://examples',
+          name: 'Usage Examples',
+          description: 'Common usage examples and workflows',
+          mimeType: 'text/markdown',
+        },
+      ],
+    };
+  });
+
+  // Read resource content
+  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    const { uri } = request.params;
+
+    switch (uri) {
+      case 'figma-tokens://setup-guide':
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'text/markdown',
+              text: `# Figma Tokens MCP Setup Guide
+
+## Prerequisites
+- Figma account
+- Figma Personal Access Token
+
+## Getting Your Figma Access Token
+1. Go to https://www.figma.com/developers/api#access-tokens
+2. Click "Get personal access token"
+3. Copy the token (it starts with \`figd_\`)
+
+## Configuration
+Set your Figma access token in one of two ways:
+
+### Option 1: Environment Variable
+\`\`\`bash
+export FIGMA_ACCESS_TOKEN="your_token_here"
+\`\`\`
+
+### Option 2: MCP Configuration
+Add to your MCP settings:
+\`\`\`json
+{
+  "figmaAccessToken": "your_token_here"
+}
+\`\`\`
+
+## Basic Workflow
+1. **Extract tokens** from a Figma file using \`extract_tokens\`
+2. **Convert to Tailwind** using \`convert_to_tailwind\`
+3. **Generate components** using \`generate_component\`
+
+## Need Help?
+Visit: https://github.com/jhlee0409/figma-tokens-mcp
+`,
+            },
+          ],
+        };
+
+      case 'figma-tokens://api-reference':
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'text/markdown',
+              text: `# Figma Tokens MCP API Reference
+
+## Tools
+
+### extract_tokens
+Extract design tokens from a Figma file.
+
+**Parameters:**
+- \`figmaFileUrl\` (required): Figma file URL
+- \`tokenTypes\` (optional): Array of token types to extract [\`colors\`, \`typography\`]
+- \`extractionStrategy\` (optional): \`auto\`, \`variables\`, \`styles\`, or \`mixed\`
+
+**Returns:**
+- \`tokens\`: Extracted design tokens hierarchy
+- \`metadata\`: Extraction information
+- \`statistics\`: Token counts and conflicts
+
+### convert_to_tailwind
+Convert design tokens to Tailwind CSS configuration.
+
+**Parameters:**
+- \`tokens\` (required): Design tokens object from extract_tokens
+- \`tailwindVersion\` (optional): \`v3\` or \`v4\` (default: v4)
+- \`preset\` (optional): \`merge\` or \`replace\` (v3 only)
+- \`typescript\` (optional): Generate TypeScript files (default: true)
+
+**Returns:**
+- \`files\`: Generated configuration files
+- \`summary\`: Conversion summary
+
+### generate_component
+Generate a React component with CVA variants.
+
+**Parameters:**
+- \`componentName\` (required): Component name (PascalCase)
+- \`tokens\` (required): Design tokens object
+- \`framework\` (optional): \`react\` (default)
+- \`typescript\` (optional): Generate TypeScript (default: true)
+- \`outputPath\` (optional): Output directory (default: ./src/components)
+
+**Returns:**
+- \`component\`: Generated component code
+- \`metadata\`: Component metadata
+- \`usage\`: Usage example
+`,
+            },
+          ],
+        };
+
+      case 'figma-tokens://examples':
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'text/markdown',
+              text: `# Figma Tokens MCP Usage Examples
+
+## Example 1: Extract and Convert to Tailwind v4
+
+\`\`\`javascript
+// Step 1: Extract tokens
+const result = await extract_tokens({
+  figmaFileUrl: "https://www.figma.com/file/abc123/MyDesign",
+  extractionStrategy: "auto"
+});
+
+// Step 2: Convert to Tailwind v4
+const tailwind = await convert_to_tailwind({
+  tokens: result.tokens,
+  tailwindVersion: "v4",
+  typescript: true
+});
+\`\`\`
+
+## Example 2: Generate Button Component
+
+\`\`\`javascript
+// Extract tokens first
+const tokens = await extract_tokens({
+  figmaFileUrl: "https://www.figma.com/file/abc123/MyDesign"
+});
+
+// Generate component
+const component = await generate_component({
+  componentName: "Button",
+  tokens: tokens.tokens,
+  typescript: true
+});
+\`\`\`
+
+## Example 3: Extract Only Colors
+
+\`\`\`javascript
+const result = await extract_tokens({
+  figmaFileUrl: "https://www.figma.com/file/abc123/MyDesign",
+  tokenTypes: ["colors"],
+  extractionStrategy: "variables"
+});
+\`\`\`
+`,
+            },
+          ],
+        };
+
+      default:
+        throw new Error(`Unknown resource: ${uri}`);
+    }
+  });
 
   // List available prompts
   server.setRequestHandler(ListPromptsRequestSchema, () => {
