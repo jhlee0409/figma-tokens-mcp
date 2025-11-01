@@ -13,19 +13,19 @@ npx @jhlee0409/figma-tokens-mcp install --figma-token YOUR_FIGMA_TOKEN
 ### 방법 2: Claude Code MCP (HTTP Transport)
 
 ```bash
-claude mcp add --transport http \
-  --header "X-Figma-Token: YOUR_FIGMA_TOKEN" \
-  figma-tokens-mcp \
-  "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp"
+claude mcp add figma-tokens-mcp \
+  "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp" \
+  --transport http \
+  --header "X-Figma-Token: YOUR_FIGMA_TOKEN"
 ```
 
 **또는 환경 변수 사용:**
 
 ```bash
-claude mcp add --transport http \
-  --env FIGMA_ACCESS_TOKEN=YOUR_FIGMA_TOKEN \
-  figma-tokens-mcp \
-  "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp"
+claude mcp add figma-tokens-mcp \
+  "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp" \
+  --transport http \
+  --env FIGMA_ACCESS_TOKEN=YOUR_FIGMA_TOKEN
 ```
 
 ### 방법 3: Smithery CLI + Interactive Setup
@@ -115,10 +115,10 @@ https://www.figma.com/file/YOUR_FILE_ID/Design-System
 **HTTP Transport:**
 ```bash
 # Header로 토큰 전달
-claude mcp add --transport http \
-  --header "X-Figma-Token: YOUR_TOKEN" \
-  figma-tokens-mcp \
-  "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp"
+claude mcp add figma-tokens-mcp \
+  "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp" \
+  --transport http \
+  --header "X-Figma-Token: YOUR_TOKEN"
 ```
 
 **stdio Transport:**
@@ -152,10 +152,10 @@ Figma에서 새 토큰을 생성하고 설정을 업데이트하세요.
 팀에서 사용하는 경우, HTTP transport를 추천합니다:
 ```bash
 # 모든 팀원이 같은 명령어 사용
-claude mcp add --transport http \
-  --header "X-Figma-Token: TEAM_SHARED_TOKEN" \
-  figma-tokens-mcp \
-  "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp"
+claude mcp add figma-tokens-mcp \
+  "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp" \
+  --transport http \
+  --header "X-Figma-Token: TEAM_SHARED_TOKEN"
 ```
 
 ### 보안
