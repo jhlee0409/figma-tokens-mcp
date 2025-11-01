@@ -16,10 +16,11 @@ npm i -g vercel
 vercel
 
 # 3. Claude Code에서 사용 (각 사용자가 자신의 토큰 사용)
-claude mcp add figma-tokens-mcp \
-  "https://your-project.vercel.app/api/mcp" \
-  --transport http \
-  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
+claude mcp add --transport http \
+  --scope user \
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN" \
+  figma-tokens-mcp \
+  https://your-project.vercel.app/api/mcp
 ```
 
 **장점:**
@@ -34,16 +35,21 @@ claude mcp add figma-tokens-mcp \
 ### 방법 2: Smithery (HTTP Transport)
 
 ```bash
-claude mcp add figma-tokens-mcp \
-  "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp" \
-  --transport http \
-  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
+claude mcp add --transport http \
+  --scope user \
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN" \
+  figma-tokens-mcp \
+  https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp
 ```
 
 ### 방법 3: 로컬 설치 (stdio)
 
 ```bash
-npx @jhlee0409/figma-tokens-mcp install --figma-token YOUR_FIGMA_TOKEN
+claude mcp add --transport stdio \
+  --scope user \
+  --env FIGMA_ACCESS_TOKEN=YOUR_FIGMA_TOKEN \
+  figma-tokens-mcp \
+  -- npx -y @jhlee0409/figma-tokens-mcp
 ```
 
 ### 방법 3: Smithery CLI + Interactive Setup
@@ -133,10 +139,11 @@ https://www.figma.com/file/YOUR_FILE_ID/Design-System
 **HTTP Transport:**
 ```bash
 # Header로 토큰 전달
-claude mcp add figma-tokens-mcp \
-  "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp" \
-  --transport http \
-  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
+claude mcp add --transport http \
+  --scope user \
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN" \
+  figma-tokens-mcp \
+  https://your-project.vercel.app/api/mcp
 ```
 
 **stdio Transport:**
@@ -170,11 +177,14 @@ Figma에서 새 토큰을 생성하고 설정을 업데이트하세요.
 팀에서 사용하는 경우, Vercel 배포를 추천합니다:
 ```bash
 # 각 팀원이 자신의 Figma 토큰 사용
-claude mcp add figma-tokens-mcp \
-  "https://your-project.vercel.app/api/mcp" \
-  --transport http \
-  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
+claude mcp add --transport http \
+  --scope user \
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN" \
+  figma-tokens-mcp \
+  https://your-project.vercel.app/api/mcp
 ```
+
+> 💡 **--scope user**: 모든 프로젝트에서 이 MCP 서버를 사용할 수 있습니다.
 
 ### 보안
 - ⚠️ Token을 Git에 커밋하지 마세요

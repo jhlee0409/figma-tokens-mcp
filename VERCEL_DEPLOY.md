@@ -37,13 +37,16 @@ https://your-project.vercel.app/api/mcp
 **각 사용자가 자신의 Figma 토큰을 사용합니다:**
 
 ```bash
-claude mcp add figma-tokens-mcp \
-  "https://your-project.vercel.app/api/mcp" \
-  --transport http \
-  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
+claude mcp add --transport http \
+  --scope user \
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN" \
+  figma-tokens-mcp \
+  https://your-project.vercel.app/api/mcp
 ```
 
 > 💡 **중요**: 서버에 환경 변수를 설정하지 않습니다. 각 사용자가 요청 시마다 자신의 Figma 토큰을 `Authorization` 헤더로 전달합니다.
+>
+> **--scope user**: 모든 프로젝트에서 이 MCP 서버를 사용할 수 있습니다. 프로젝트별로 설정하려면 `--scope project`를 사용하세요.
 
 ## ✅ 테스트
 
@@ -74,11 +77,14 @@ Error: FIGMA_ACCESS_TOKEN not configured
 **해결**: Authorization 헤더가 올바르게 설정되었는지 확인
 ```bash
 # 올바른 형식
-claude mcp add figma-tokens-mcp \
-  "https://your-project.vercel.app/api/mcp" \
-  --transport http \
-  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
+claude mcp add --transport http \
+  --scope user \
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN" \
+  figma-tokens-mcp \
+  https://your-project.vercel.app/api/mcp
 ```
+
+> ⚠️ **명령어 순서**: `--transport`, `--scope`, `--header`는 `claude mcp add` 다음에 위치해야 하고, 서버 이름과 URL은 마지막에 위치합니다.
 
 ### 빌드 에러
 ```bash

@@ -84,27 +84,34 @@ An **open-source** [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 vercel
 
 # 2. Claude Code에서 사용 (각 사용자가 자신의 토큰 사용)
-claude mcp add figma-tokens-mcp \
-  "https://your-project.vercel.app/api/mcp" \
-  --transport http \
-  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
+claude mcp add --transport http \
+  --scope user \
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN" \
+  figma-tokens-mcp \
+  https://your-project.vercel.app/api/mcp
 ```
 
 > ✨ **장점**: 각 사용자가 자신의 Figma 토큰 사용, 무료 배포, 팀 공유 용이
+> 💡 **--scope user**: 모든 프로젝트에서 사용 가능
 
 [상세 배포 가이드 보기](VERCEL_DEPLOY.md)
 
 #### 옵션 2: Smithery (HTTP)
 ```bash
-claude mcp add figma-tokens-mcp \
-  "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp" \
-  --transport http \
-  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
+claude mcp add --transport http \
+  --scope user \
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN" \
+  figma-tokens-mcp \
+  https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp
 ```
 
 #### 옵션 3: 로컬 설치 (stdio)
 ```bash
-npx @jhlee0409/figma-tokens-mcp install --figma-token YOUR_FIGMA_TOKEN
+claude mcp add --transport stdio \
+  --scope user \
+  --env FIGMA_ACCESS_TOKEN=YOUR_FIGMA_TOKEN \
+  figma-tokens-mcp \
+  -- npx -y @jhlee0409/figma-tokens-mcp
 ```
 
 <details>
