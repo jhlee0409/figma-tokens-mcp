@@ -384,3 +384,6 @@ For more information, visit: https://github.com/jhlee0409/figma-tokens-mcp
     process.exit(1);
   });
 }
+
+// Default export for Smithery
+export default createServer;

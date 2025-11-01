@@ -1,26 +1,16 @@
 {
-  "name": "figma-tokens-mcp",
-  "version": "0.1.0",
-  "description": "Model Context Protocol (MCP) server for extracting design tokens from Figma and generating Tailwind CSS configurations",
   "main": "dist/mcp/server.js",
-  "transports": {
-    "http": {
-      "enabled": true
-    },
-    "stdio": {
-      "enabled": true
-    }
-  },
   "config": {
-    "schema": {
-      "type": "object",
-      "properties": {
-        "figmaAccessToken": {
-          "type": "string",
-          "title": "Figma Access Token",
-          "description": "Personal access token for Figma API authentication. Get yours at: https://www.figma.com/developers/api#access-tokens"
-        }
+    "type": "object",
+    "title": "Figma Tokens MCP Configuration",
+    "properties": {
+      "figmaAccessToken": {
+        "type": "string",
+        "title": "Figma Access Token",
+        "description": "Personal access token for Figma API. Get one at https://www.figma.com/developers/api#access-tokens",
+        "format": "password"
       }
-    }
+    },
+    "required": []
   }
 }
