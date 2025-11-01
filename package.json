@@ -66,7 +66,7 @@
     "class-variance-authority": "^0.7.1"
   },
   "devDependencies": {
-    "@smithery/cli": "^0.6.0",
+    "@smithery/cli": "^1.6.3",
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.2",
     "@typescript-eslint/eslint-plugin": "^8.18.2",
