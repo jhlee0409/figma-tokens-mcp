@@ -52,6 +52,7 @@ describe.skip('E2E Workflows', () => {
               id: 'collection-1',
               name: 'Design Tokens',
               modes: [{ modeId: 'mode-1', name: 'Default' }],
+              defaultModeId: 'mode-1',
             },
           },
           variables: {
@@ -105,6 +106,7 @@ describe.skip('E2E Workflows', () => {
               id: 'collection-1',
               name: 'Design Tokens',
               modes: [{ modeId: 'mode-1', name: 'Default' }],
+              defaultModeId: 'mode-1',
             },
           },
           variables: {
@@ -314,6 +316,7 @@ describe.skip('E2E Workflows', () => {
               id: 'collection-1',
               name: 'Design Tokens',
               modes: [{ modeId: 'mode-1', name: 'Default' }],
+              defaultModeId: 'mode-1',
             },
           },
           variables: {
@@ -385,6 +388,7 @@ describe.skip('E2E Workflows', () => {
               id: 'collection-1',
               name: 'Design Tokens',
               modes: [{ modeId: 'mode-1', name: 'Default' }],
+              defaultModeId: 'mode-1',
             },
           },
           variables: {
@@ -405,6 +409,14 @@ describe.skip('E2E Workflows', () => {
           },
         },
       });
+
+      mockApiClient.getFileStyles.mockResolvedValue([
+        {
+          key: 'style-1',
+          name: 'colors/primary',
+          styleType: 'FILL',
+        },
+      ]);
 
       mockApiClient.getFile.mockResolvedValue({
         document: {},
@@ -457,6 +469,7 @@ describe.skip('E2E Workflows', () => {
               id: 'collection-1',
               name: 'Design Tokens',
               modes: [{ modeId: 'mode-1', name: 'Default' }],
+              defaultModeId: 'mode-1',
             },
           },
           variables: {
@@ -477,6 +490,14 @@ describe.skip('E2E Workflows', () => {
           },
         },
       });
+
+      mockApiClient.getFileStyles.mockResolvedValue([
+        {
+          key: 'style-1',
+          name: 'text/heading',
+          styleType: 'TEXT',
+        },
+      ]);
 
       mockApiClient.getFile.mockResolvedValue({
         document: {},
@@ -630,6 +651,7 @@ describe.skip('E2E Workflows', () => {
               id: 'collection-1',
               name: 'Design Tokens',
               modes: [{ modeId: 'mode-1', name: 'Default' }],
+              defaultModeId: 'mode-1',
             },
           },
           variables,
