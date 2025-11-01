@@ -701,6 +701,13 @@ export default function ({
   config?: ServerConfig;
   headers?: Record<string, string>;
 }) {
+  // DEBUG: Log what we receive
+  console.error('[DEBUG] Smithery config:', JSON.stringify(config, null, 2));
+  console.error('[DEBUG] Smithery headers:', JSON.stringify(headers, null, 2));
+  console.error('[DEBUG] Environment vars:', {
+    FIGMA_ACCESS_TOKEN: process.env.FIGMA_ACCESS_TOKEN ? '(set)' : '(not set)',
+  });
+
   // HTTP transport: Read token from Authorization: Bearer header (Smithery standard)
   // stdio transport: Read from environment or config
   let figmaToken: string | undefined;
@@ -709,11 +716,13 @@ export default function ({
   const authHeader = headers?.['authorization'] || headers?.['Authorization'];
   if (authHeader && authHeader.startsWith('Bearer ')) {
     figmaToken = authHeader.substring(7); // Remove "Bearer " prefix
+    console.error('[DEBUG] Token extracted from Authorization header');
   }
 
   // Fallback to other sources
   if (!figmaToken) {
     figmaToken = config?.figmaAccessToken || process.env.FIGMA_ACCESS_TOKEN;
+    console.error('[DEBUG] Token from fallback:', figmaToken ? '(found)' : '(not found)');
   }
 
   const serverConfig: ServerConfig = {
