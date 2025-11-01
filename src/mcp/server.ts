@@ -326,7 +326,19 @@ export async function startServer(config: ServerConfig = {}): Promise<void> {
 }
 
 // Run the server if this is the main module
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Support both ESM (import.meta) and CJS (require.main) contexts
+let isMainModule = false;
+try {
+  // ESM check
+  if (typeof import.meta !== 'undefined' && typeof import.meta.url === 'string') {
+    isMainModule = import.meta.url === `file://${process.argv[1]}`;
+  }
+} catch {
+  // Fallback for CJS
+  isMainModule = typeof require !== 'undefined' && require.main === module;
+}
+
+if (isMainModule) {
   // Check for --version flag
   if (process.argv.includes('--version') || process.argv.includes('-v')) {
     console.log(`${SERVER_NAME} v${SERVER_VERSION}`);
