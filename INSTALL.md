@@ -6,6 +6,11 @@ Figma Tokens MCP를 설치하는 다양한 방법을 제공합니다.
 
 ## 🚀 빠른 설치
 
+> 💡 **MCP 클라이언트 선택**
+> - **Claude Code (CLI)**: HTTP transport 직접 지원, 명령어로 간단 설치
+> - **Claude Desktop (GUI)**: Settings > Connectors 메뉴에서 설치 (Pro/Max/Team/Enterprise 플랜)
+> - **기타 MCP 클라이언트**: 각 클라이언트의 설정 방법 참고
+
 ### 방법 1: **Vercel 배포** (가장 추천!)
 
 ```bash
@@ -15,12 +20,17 @@ npm i -g vercel
 # 2. 프로젝트 배포
 vercel
 
-# 3. Claude Code에서 사용 (각 사용자가 자신의 토큰 사용)
+# 3-A. Claude Code에서 사용
 claude mcp add --transport http \
   --scope user \
   --header "Authorization: Bearer YOUR_FIGMA_TOKEN" \
   figma-tokens-mcp \
   https://your-project.vercel.app/api/mcp
+
+# 3-B. Claude Desktop에서 사용
+# Settings > Connectors > Add Connector
+# URL: https://your-project.vercel.app/api/mcp
+# Authentication: Bearer Token (YOUR_FIGMA_TOKEN)
 ```
 
 **장점:**
@@ -62,7 +72,9 @@ npx -y @smithery/cli@latest install @jhlee0409/figma-tokens-mcp --client claude
 npx figma-tokens-setup
 ```
 
-### 방법 4: 수동 설정 (Claude Desktop)
+### 방법 4: Claude Desktop 로컬 stdio 설정
+
+**Claude Desktop의 경우 stdio transport만 지원합니다** (HTTP는 Settings > Connectors에서만 가능)
 
 1. Figma Access Token 발급:
    - [Figma](https://www.figma.com/) → Settings → Account → Personal Access Tokens
@@ -75,7 +87,7 @@ npx figma-tokens-setup
   "mcpServers": {
     "figma-tokens": {
       "command": "npx",
-      "args": ["-y", "figma-tokens-mcp"],
+      "args": ["-y", "@jhlee0409/figma-tokens-mcp"],
       "env": {
         "FIGMA_ACCESS_TOKEN": "your-figma-token-here"
       }
@@ -84,14 +96,26 @@ npx figma-tokens-setup
 }
 ```
 
+**설정 파일 위치:**
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+
 3. Claude Desktop 재시작
+
+## 📦 클라이언트별 지원 방식
+
+| 클라이언트 | HTTP Transport | stdio Transport | 비고 |
+|-----------|---------------|-----------------|------|
+| **Claude Code (CLI)** | ✅ `claude mcp add` | ✅ `claude mcp add` | 모든 transport 지원 |
+| **Claude Desktop (GUI)** | ✅ Settings > Connectors<br/>(Pro/Max/Team/Enterprise) | ✅ `claude_desktop_config.json` | HTTP는 유료 플랜만 |
+| **기타 MCP 클라이언트** | 클라이언트마다 다름 | 대부분 지원 | 문서 참고 |
 
 ## 📦 Transport 방식 비교
 
 | Transport | 장점 | 단점 | 사용 시나리오 |
 |-----------|------|------|--------------|
-| **HTTP** | - 서버리스 배포<br/>- 확장성 좋음<br/>- 중앙 관리 | - 네트워크 필요<br/>- 약간의 지연 | - 팀 공유<br/>- 프로덕션 |
-| **stdio** | - 로컬 실행<br/>- 빠름<br/>- 오프라인 가능 | - 개인 설정 필요<br/>- 버전 관리 수동 | - 개인 개발<br/>- 오프라인 |
+| **HTTP** | - 서버리스 배포<br/>- 확장성 좋음<br/>- 중앙 관리<br/>- 팀 공유 용이 | - 네트워크 필요<br/>- 약간의 지연<br/>- Claude Desktop은 유료 플랜 | - Claude Code 사용<br/>- 팀 협업<br/>- 프로덕션 |
+| **stdio** | - 로컬 실행<br/>- 빠름<br/>- 오프라인 가능<br/>- 모든 플랜 지원 | - 개인 설정 필요<br/>- 버전 관리 수동 | - Claude Desktop 무료 플랜<br/>- 개인 개발<br/>- 오프라인 |
 
 ## 🔑 Figma Access Token 발급 방법
 

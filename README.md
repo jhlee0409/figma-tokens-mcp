@@ -78,21 +78,30 @@ An **open-source** [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 
 ### ⚡ 설치 방법 선택
 
+> 🔧 **MCP 클라이언트 지원**
+> - **Claude Code**: HTTP/stdio 모두 지원 (명령어로 간단 설치)
+> - **Claude Desktop**: stdio 또는 Settings > Connectors (HTTP는 유료 플랜)
+> - **기타 MCP 클라이언트**: 대부분 stdio 지원
+
 #### 옵션 1: **Vercel 배포** (가장 추천! 🚀)
 ```bash
 # 1. Vercel에 배포
 vercel
 
-# 2. Claude Code에서 사용 (각 사용자가 자신의 토큰 사용)
+# 2-A. Claude Code에서 사용
 claude mcp add --transport http \
   --scope user \
   --header "Authorization: Bearer YOUR_FIGMA_TOKEN" \
   figma-tokens-mcp \
   https://your-project.vercel.app/api/mcp
+
+# 2-B. Claude Desktop에서 사용 (Pro/Max/Team/Enterprise 플랜)
+# Settings > Connectors > Add Connector
+# - URL: https://your-project.vercel.app/api/mcp
+# - Auth: Bearer Token (YOUR_FIGMA_TOKEN)
 ```
 
 > ✨ **장점**: 각 사용자가 자신의 Figma 토큰 사용, 무료 배포, 팀 공유 용이
-> 💡 **--scope user**: 모든 프로젝트에서 사용 가능
 
 [상세 배포 가이드 보기](VERCEL_DEPLOY.md)
 
