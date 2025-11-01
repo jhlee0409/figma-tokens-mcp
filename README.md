@@ -25,12 +25,19 @@ npx -y figma-tokens-mcp
 
 ### Claude Desktop 설정
 
-1. Figma Personal Access Token 발급:
-   - https://www.figma.com/developers/api#access-tokens
-   - "Generate new token" 클릭
-   - 토큰 복사 (figd_로 시작)
+#### 1. Figma Access Token 발급
 
-2. Claude Desktop 설정 파일 수정:
+**가장 빠른 방법**: 👉 https://www.figma.com/settings
+
+1. Figma 로그인
+2. Settings > **Security** 탭
+3. **"Generate new token"** 클릭
+4. 토큰 이름 입력 후 Enter
+5. **즉시 복사** (한 번만 표시됩니다!)
+
+> 📖 자세한 가이드: [SETUP.md](SETUP.md)
+
+#### 2. Claude Desktop 설정 파일 수정
 
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
