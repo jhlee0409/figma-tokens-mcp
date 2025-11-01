@@ -6,18 +6,45 @@
  * and responses follow the MCP format.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createServer } from '../../src/mcp/server';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 
 describe('MCP Protocol Compliance', () => {
   let server: Server;
+  let client: Client;
+  let clientTransport: InMemoryTransport;
+  let serverTransport: InMemoryTransport;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    // Create in-memory transports for testing
+    [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+
     server = createServer({
       figmaAccessToken: 'test-token',
     });
+
+    client = new Client(
+      {
+        name: 'test-client',
+        version: '1.0.0',
+      },
+      {
+        capabilities: {},
+      }
+    );
+
+    // Connect server and client
+    await server.connect(serverTransport);
+    await client.connect(clientTransport);
+  });
+
+  afterEach(async () => {
+    await client.close();
+    await server.close();
   });
 
   describe('Server Initialization', () => {
@@ -26,36 +53,25 @@ describe('MCP Protocol Compliance', () => {
       expect(server).toBeInstanceOf(Server);
     });
 
-    it('should register tools capability', () => {
-      const serverInfo = (server as any).serverInfo;
-      expect(serverInfo).toBeDefined();
-      expect(serverInfo.capabilities).toBeDefined();
-      expect(serverInfo.capabilities.tools).toBeDefined();
+    it('should register tools capability', async () => {
+      // Test capability by calling listTools
+      const response = await client.listTools();
+      expect(response).toBeDefined();
+      expect(response.tools).toBeDefined();
+      expect(response.tools.length).toBeGreaterThan(0);
     });
   });
 
   describe('ListTools Request', () => {
     it('should list all 5 tools', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/list',
-          params: {},
-        },
-        ListToolsRequestSchema
-      );
+      const response = await client.listTools();
 
       expect(response.tools).toBeDefined();
       expect(response.tools).toHaveLength(5);
     });
 
     it('should include extract_tokens tool', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/list',
-          params: {},
-        },
-        ListToolsRequestSchema
-      );
+      const response = await client.listTools();
 
       const extractTool = response.tools.find((t) => t.name === 'extract_tokens');
       expect(extractTool).toBeDefined();
@@ -67,13 +83,7 @@ describe('MCP Protocol Compliance', () => {
     });
 
     it('should include convert_to_tailwind tool', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/list',
-          params: {},
-        },
-        ListToolsRequestSchema
-      );
+      const response = await client.listTools();
 
       const convertTool = response.tools.find((t) => t.name === 'convert_to_tailwind');
       expect(convertTool).toBeDefined();
@@ -83,13 +93,7 @@ describe('MCP Protocol Compliance', () => {
     });
 
     it('should include generate_component tool', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/list',
-          params: {},
-        },
-        ListToolsRequestSchema
-      );
+      const response = await client.listTools();
 
       const generateTool = response.tools.find((t) => t.name === 'generate_component');
       expect(generateTool).toBeDefined();
@@ -100,13 +104,7 @@ describe('MCP Protocol Compliance', () => {
     });
 
     it('should include health_check tool', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/list',
-          params: {},
-        },
-        ListToolsRequestSchema
-      );
+      const response = await client.listTools();
 
       const healthTool = response.tools.find((t) => t.name === 'health_check');
       expect(healthTool).toBeDefined();
@@ -115,13 +113,7 @@ describe('MCP Protocol Compliance', () => {
     });
 
     it('should include get_server_info tool', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/list',
-          params: {},
-        },
-        ListToolsRequestSchema
-      );
+      const response = await client.listTools();
 
       const infoTool = response.tools.find((t) => t.name === 'get_server_info');
       expect(infoTool).toBeDefined();
@@ -132,13 +124,7 @@ describe('MCP Protocol Compliance', () => {
 
   describe('Tool Schemas', () => {
     it('extract_tokens should have valid JSON Schema', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/list',
-          params: {},
-        },
-        ListToolsRequestSchema
-      );
+      const response = await client.listTools();
 
       const tool = response.tools.find((t) => t.name === 'extract_tokens');
       const schema = tool?.inputSchema;
@@ -158,13 +144,7 @@ describe('MCP Protocol Compliance', () => {
     });
 
     it('convert_to_tailwind should have valid JSON Schema', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/list',
-          params: {},
-        },
-        ListToolsRequestSchema
-      );
+      const response = await client.listTools();
 
       const tool = response.tools.find((t) => t.name === 'convert_to_tailwind');
       const schema = tool?.inputSchema;
@@ -181,13 +161,7 @@ describe('MCP Protocol Compliance', () => {
     });
 
     it('generate_component should have valid JSON Schema', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/list',
-          params: {},
-        },
-        ListToolsRequestSchema
-      );
+      const response = await client.listTools();
 
       const tool = response.tools.find((t) => t.name === 'generate_component');
       const schema = tool?.inputSchema;
@@ -206,16 +180,10 @@ describe('MCP Protocol Compliance', () => {
 
   describe('CallTool Requests', () => {
     it('health_check should return valid response', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/call',
-          params: {
-            name: 'health_check',
-            arguments: {},
-          },
-        },
-        CallToolRequestSchema
-      );
+      const response = await client.callTool({
+        name: 'health_check',
+        arguments: {},
+      });
 
       expect(response.content).toBeDefined();
       expect(response.content).toHaveLength(1);
@@ -229,16 +197,10 @@ describe('MCP Protocol Compliance', () => {
     });
 
     it('get_server_info should return valid response', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/call',
-          params: {
-            name: 'get_server_info',
-            arguments: {},
-          },
-        },
-        CallToolRequestSchema
-      );
+      const response = await client.callTool({
+        name: 'get_server_info',
+        arguments: {},
+      });
 
       expect(response.content).toBeDefined();
       expect(response.content).toHaveLength(1);
@@ -259,16 +221,10 @@ describe('MCP Protocol Compliance', () => {
     });
 
     it('should return error for unknown tool', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/call',
-          params: {
-            name: 'unknown_tool',
-            arguments: {},
-          },
-        },
-        CallToolRequestSchema
-      );
+      const response = await client.callTool({
+        name: 'unknown_tool',
+        arguments: {},
+      });
 
       expect(response.isError).toBe(true);
       expect(response.content).toBeDefined();
@@ -277,16 +233,10 @@ describe('MCP Protocol Compliance', () => {
     });
 
     it('should return error for invalid parameters', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/call',
-          params: {
-            name: 'extract_tokens',
-            arguments: {},
-          },
-        },
-        CallToolRequestSchema
-      );
+      const response = await client.callTool({
+        name: 'extract_tokens',
+        arguments: {},
+      });
 
       expect(response.isError).toBe(true);
       expect(response.content).toBeDefined();
@@ -297,16 +247,10 @@ describe('MCP Protocol Compliance', () => {
 
   describe('Response Format Compliance', () => {
     it('should return responses in MCP format', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/call',
-          params: {
-            name: 'health_check',
-            arguments: {},
-          },
-        },
-        CallToolRequestSchema
-      );
+      const response = await client.callTool({
+        name: 'health_check',
+        arguments: {},
+      });
 
       // MCP response must have content array
       expect(response).toHaveProperty('content');
@@ -320,16 +264,10 @@ describe('MCP Protocol Compliance', () => {
     });
 
     it('should return proper JSON in text content', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/call',
-          params: {
-            name: 'get_server_info',
-            arguments: {},
-          },
-        },
-        CallToolRequestSchema
-      );
+      const response = await client.callTool({
+        name: 'get_server_info',
+        arguments: {},
+      });
 
       const text = response.content[0].text;
       expect(() => JSON.parse(text)).not.toThrow();
@@ -345,73 +283,61 @@ describe('MCP Protocol Compliance', () => {
         figmaAccessToken: undefined,
       });
 
-      const response = await serverWithoutToken.request(
-        {
-          method: 'tools/call',
-          params: {
-            name: 'extract_tokens',
-            arguments: {
-              figmaFileUrl: 'https://www.figma.com/file/abc123/test',
-            },
-          },
-        },
-        CallToolRequestSchema
+      // Create client for this server
+      const [clientTransport2, serverTransport2] = InMemoryTransport.createLinkedPair();
+      await serverWithoutToken.connect(serverTransport2);
+      const client2 = new Client(
+        { name: 'test-client-2', version: '1.0.0' },
+        { capabilities: {} }
       );
+      await client2.connect(clientTransport2);
+
+      const response = await client2.callTool({
+        name: 'extract_tokens',
+        arguments: {
+          figmaFileUrl: 'https://www.figma.com/file/abc123/test',
+        },
+      });
+
+      await client2.close();
+      await serverWithoutToken.close();
 
       expect(response.isError).toBe(true);
       expect(response.content[0].text).toContain('access token');
     });
 
     it('should handle invalid URL format', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/call',
-          params: {
-            name: 'extract_tokens',
-            arguments: {
-              figmaFileUrl: 'not-a-url',
-            },
-          },
+      const response = await client.callTool({
+        name: 'extract_tokens',
+        arguments: {
+          figmaFileUrl: 'not-a-url',
         },
-        CallToolRequestSchema
-      );
+      });
 
       expect(response.isError).toBe(true);
       expect(response.content[0].text).toContain('Invalid');
     });
 
     it('should validate token structure in convert_to_tailwind', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/call',
-          params: {
-            name: 'convert_to_tailwind',
-            arguments: {
-              tokens: {},
-            },
-          },
+      const response = await client.callTool({
+        name: 'convert_to_tailwind',
+        arguments: {
+          tokens: {},
         },
-        CallToolRequestSchema
-      );
+      });
 
       expect(response.isError).toBe(true);
       expect(response.content[0].text).toContain('token');
     });
 
     it('should validate component name format', async () => {
-      const response = await server.request(
-        {
-          method: 'tools/call',
-          params: {
-            name: 'generate_component',
-            arguments: {
-              componentName: 'invalid-name',
-              tokens: { colors: { primary: '#000' } },
-            },
-          },
+      const response = await client.callTool({
+        name: 'generate_component',
+        arguments: {
+          componentName: 'invalid-name',
+          tokens: { colors: { primary: '#000' } },
         },
-        CallToolRequestSchema
-      );
+      });
 
       expect(response.isError).toBe(true);
       expect(response.content[0].text).toContain('Component name');

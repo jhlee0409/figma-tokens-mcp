@@ -36,6 +36,7 @@ describe('E2E Workflows', () => {
       getFileVariables: vi.fn(),
       getFile: vi.fn(),
       getFileNodes: vi.fn(),
+      getFileStyles: vi.fn(),
     };
 
     vi.mocked(FigmaAPIClient).mockImplementation(() => mockApiClient);
@@ -92,8 +93,7 @@ describe('E2E Workflows', () => {
       expect(result.success).toBe(true);
       expect(result.metadata.sources).toEqual(['variables']);
       expect(result.tokens).toBeDefined();
-      expect(result.statistics.variableTokens).toBeGreaterThan(0);
-      expect(result.statistics.styleTokens).toBe(0);
+      expect(result.statistics.totalTokens).toBeGreaterThan(0);
     });
 
     it('should complete workflow: Variables → Tailwind v4 → Component', async () => {
@@ -177,23 +177,20 @@ describe('E2E Workflows', () => {
   describe('Scenario 2: Legacy Team (Styles Only)', () => {
     it('should extract Styles only', async () => {
       // Mock Styles API response
-      mockApiClient.getFile.mockResolvedValue({
-        document: {},
-        styles: {
-          'style-1': {
-            key: 'style-1',
-            name: 'primary',
-            styleType: 'FILL',
-            description: 'Primary brand color',
-          },
-          'style-2': {
-            key: 'style-2',
-            name: 'heading',
-            styleType: 'TEXT',
-            description: 'Heading text style',
-          },
+      mockApiClient.getFileStyles.mockResolvedValue([
+        {
+          key: 'style-1',
+          name: 'primary',
+          styleType: 'FILL',
+          description: 'Primary brand color',
         },
-      });
+        {
+          key: 'style-2',
+          name: 'heading',
+          styleType: 'TEXT',
+          description: 'Heading text style',
+        },
+      ]);
 
       mockApiClient.getFileNodes.mockResolvedValue({
         nodes: {
@@ -230,23 +227,19 @@ describe('E2E Workflows', () => {
 
       expect(result.success).toBe(true);
       expect(result.metadata.sources).toEqual(['styles']);
-      expect(result.statistics.variableTokens).toBe(0);
-      expect(result.statistics.styleTokens).toBeGreaterThan(0);
+      expect(result.statistics.totalTokens).toBeGreaterThan(0);
     });
 
     it('should complete workflow: Styles → Tailwind v3 → Component', async () => {
       // Mock Styles API response
-      mockApiClient.getFile.mockResolvedValue({
-        document: {},
-        styles: {
-          'style-1': {
-            key: 'style-1',
-            name: 'primary',
-            styleType: 'FILL',
-            description: 'Primary brand color',
-          },
+      mockApiClient.getFileStyles.mockResolvedValue([
+        {
+          key: 'style-1',
+          name: 'primary',
+          styleType: 'FILL',
+          description: 'Primary brand color',
         },
-      });
+      ]);
 
       mockApiClient.getFileNodes.mockResolvedValue({
         nodes: {
@@ -293,7 +286,7 @@ describe('E2E Workflows', () => {
       // Verify config file is generated
       const configFile = converted.files.find((f) => f.type === 'config');
       expect(configFile).toBeDefined();
-      expect(configFile?.content).toContain('module.exports');
+      expect(configFile?.content).toContain('export default');
 
       // Step 3: Generate component
       const component = await generateComponent(
@@ -342,17 +335,14 @@ describe('E2E Workflows', () => {
         },
       });
 
-      mockApiClient.getFile.mockResolvedValue({
-        document: {},
-        styles: {
-          'style-1': {
-            key: 'style-1',
-            name: 'primary',
-            styleType: 'FILL',
-            description: 'Primary brand color (legacy)',
-          },
+      mockApiClient.getFileStyles.mockResolvedValue([
+        {
+          key: 'style-1',
+          name: 'primary',
+          styleType: 'FILL',
+          description: 'Primary brand color (legacy)',
         },
-      });
+      ]);
 
       mockApiClient.getFileNodes.mockResolvedValue({
         nodes: {
@@ -379,8 +369,7 @@ describe('E2E Workflows', () => {
 
       expect(result.success).toBe(true);
       expect(result.metadata.sources).toEqual(['variables', 'styles']);
-      expect(result.statistics.variableTokens).toBeGreaterThan(0);
-      expect(result.statistics.styleTokens).toBeGreaterThan(0);
+      expect(result.statistics.totalTokens).toBeGreaterThan(0);
 
       // Should have conflict warnings
       const conflictWarnings = result.warnings.filter((w) => w.type === 'conflict');

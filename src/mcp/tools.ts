@@ -456,6 +456,16 @@ export async function generateComponent(
     );
   }
 
+  // Validate component name length (max 100 characters)
+  if (componentName.length > 100) {
+    throw new MCPToolError(
+      `Component name is too long (${componentName.length} characters). Maximum allowed is 100 characters.`,
+      'generate_component',
+      'COMPONENT_NAME_TOO_LONG',
+      { componentName: componentName.substring(0, 50) + '...' }
+    );
+  }
+
   if (framework !== 'react') {
     throw new MCPToolError(
       `Unsupported framework: ${framework as string}. Only 'react' is currently supported.`,
@@ -466,6 +476,18 @@ export async function generateComponent(
   }
 
   const warnings: TokenWarning[] = [];
+
+  // Sanitize output path to prevent path traversal
+  let sanitizedPath = outputPath;
+  if (outputPath.includes('..') || /^(\/|[A-Z]:\\)/.test(outputPath)) {
+    context.logger.warn(`Absolute or traversal path detected, using default: ${outputPath}`);
+    sanitizedPath = './src/components';
+    warnings.push({
+      type: 'warning',
+      severity: 'medium',
+      message: `Absolute or traversal paths are not allowed. Using default path: ${sanitizedPath}`,
+    });
+  }
 
   // Handle section URL if provided (future enhancement)
   if (sectionUrl) {
@@ -483,7 +505,7 @@ export async function generateComponent(
     const result = generateReactComponent({
       componentName,
       tokens,
-      outputPath,
+      outputPath: sanitizedPath,
     });
 
     const filename = typescript ? `${componentName}.tsx` : `${componentName}.jsx`;
@@ -493,7 +515,7 @@ export async function generateComponent(
     const props = extractPropsFromCode(result.content);
 
     const component = {
-      path: outputPath,
+      path: sanitizedPath,
       filename,
       content: result.content,
       type: 'component' as const,

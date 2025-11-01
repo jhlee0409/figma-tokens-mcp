@@ -9,16 +9,23 @@
  * - Injection attack prevention
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { extractTokens, convertToTailwind, generateComponent } from '../../src/mcp/tools';
 import type { ToolContext } from '../../src/mcp/types';
 import { createServer } from '../../src/mcp/server';
 import { CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 
 describe('Security Validation', () => {
   let mockContext: ToolContext;
+  let server: Server;
+  let client: Client;
+  let clientTransport: InMemoryTransport;
+  let serverTransport: InMemoryTransport;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mockContext = {
       figmaAccessToken: 'secret-token-12345',
       logger: {
@@ -28,6 +35,32 @@ describe('Security Validation', () => {
         error: vi.fn(),
       },
     };
+
+    // Create in-memory transports for testing
+    [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+
+    server = createServer({
+      figmaAccessToken: 'secret-token-12345',
+    });
+
+    client = new Client(
+      {
+        name: 'test-client',
+        version: '1.0.0',
+      },
+      {
+        capabilities: {},
+      }
+    );
+
+    // Connect server and client
+    await server.connect(serverTransport);
+    await client.connect(clientTransport);
+  });
+
+  afterEach(async () => {
+    await client.close();
+    await server.close();
   });
 
   describe('Token Leakage Prevention', () => {
@@ -62,40 +95,20 @@ describe('Security Validation', () => {
     });
 
     it('should not expose token in MCP responses', async () => {
-      const server = createServer({
-        figmaAccessToken: 'secret-token-12345',
+      const response = await client.callTool({
+        name: 'health_check',
+        arguments: {},
       });
-
-      const response = await server.request(
-        {
-          method: 'tools/call',
-          params: {
-            name: 'health_check',
-            arguments: {},
-          },
-        },
-        CallToolRequestSchema
-      );
 
       const responseText = JSON.stringify(response);
       expect(responseText).not.toContain('secret-token-12345');
     });
 
     it('should not include token in server info', async () => {
-      const server = createServer({
-        figmaAccessToken: 'secret-token-12345',
+      const response = await client.callTool({
+        name: 'get_server_info',
+        arguments: {},
       });
-
-      const response = await server.request(
-        {
-          method: 'tools/call',
-          params: {
-            name: 'get_server_info',
-            arguments: {},
-          },
-        },
-        CallToolRequestSchema
-      );
 
       const responseText = response.content[0].text;
       expect(responseText).not.toContain('secret-token-12345');
