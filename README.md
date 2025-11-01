@@ -4,12 +4,15 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/)
-[![MCP](https://img.shields.io/badge/MCP-1.0-purple)](https://modelcontextprotocol.io/)
+[![MCP Spec](https://img.shields.io/badge/MCP-2025--03--26-purple)](https://modelcontextprotocol.io/)
+[![OAuth 2.1](https://img.shields.io/badge/OAuth-2.1-green)](https://oauth.net/2.1/)
 
 > **Bridge the gap between Figma design systems and Tailwind CSS with intelligent design token extraction and conversion.**
 
 An **open-source** [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that automatically extracts design tokens from Figma files and generates production-ready Tailwind CSS configurations, complete with component generation capabilities.
 
+> ✨ **MCP 2025 Compliant**: Built with [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26) transport and OAuth 2.1 authentication
+>
 > 🔒 **Security**: Each user uses their own Figma Personal Access Token. This server does not store or share tokens between users.
 
 ## Table of Contents

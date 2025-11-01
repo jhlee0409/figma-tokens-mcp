@@ -1,10 +1,15 @@
 /**
  * Vercel MCP Server Route
  *
- * This route wraps the existing Figma Tokens MCP server
- * and makes it accessible via HTTP/SSE transport on Vercel.
+ * MCP 2025 Specification Compliant
+ * - Streamable HTTP transport (2025-03-26 spec)
+ * - OAuth 2.1 authentication with Bearer tokens
+ * - Per-user authorization (no shared tokens)
  *
  * Users provide their own Figma tokens via Authorization header.
+ * OAuth metadata available at: /.well-known/oauth-protected-resource
+ *
+ * @see https://modelcontextprotocol.io/specification/2025-03-26
  */
 
 import { createMcpHandler, withMcpAuth } from 'mcp-handler';
