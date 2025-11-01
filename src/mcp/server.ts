@@ -32,6 +32,9 @@ import { Logger, LogLevel } from '../utils/logger.js';
 const SERVER_NAME = 'figma-tokens-mcp';
 const SERVER_VERSION = '0.1.0';
 
+// Export server instance for Smithery HTTP transport
+export let serverInstance: Server | null = null;
+
 /**
  * Creates and configures the MCP server
  */
@@ -52,6 +55,9 @@ export function createServer(config: ServerConfig = {}): Server {
       },
     }
   );
+
+  // Store server instance for HTTP transport
+  serverInstance = server;
 
   // Create tool context
   const toolContext: ToolContext = {
@@ -323,6 +329,11 @@ export async function startServer(config: ServerConfig = {}): Promise<void> {
     console.error('Unhandled rejection at:', promise, 'reason:', reason);
     process.exit(1);
   });
+}
+
+// Initialize server instance immediately for Smithery HTTP transport
+if (!serverInstance) {
+  createServer();
 }
 
 // Run the server if this is the main module
