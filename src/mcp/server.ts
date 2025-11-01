@@ -375,7 +375,7 @@ For more information, visit: https://github.com/jhlee0409/figma-tokens-mcp
 }
 
 // Default export for Smithery
-// Smithery expects a function that receives config and returns a server
-export default function ({ config = {} }: { config?: ServerConfig } = {}) {
-  return createServer(config);
+// Smithery SDK expects { config } destructured parameter
+export default function ({ config }: { config?: ServerConfig }) {
+  return createServer(config || {});
 }

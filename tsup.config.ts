@@ -1,12 +1,12 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig([
-  // Server entry with shebang
+  // Server entry with shebang (ESM and CJS for Smithery compatibility)
   {
     entry: {
       'mcp/server': 'src/mcp/server.ts',
     },
-    format: ['esm'],
+    format: ['esm', 'cjs'],
     target: 'node18',
     platform: 'node',
     outDir: 'dist',
