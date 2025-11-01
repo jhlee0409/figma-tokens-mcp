@@ -671,22 +671,38 @@ ${SERVER_NAME} v${SERVER_VERSION}
 MCP server for extracting design tokens from Figma and generating Tailwind CSS configurations.
 
 Usage:
-  npx figma-tokens-mcp
-
-Environment Variables:
-  FIGMA_ACCESS_TOKEN  Your Figma personal access token (required)
-  LOG_LEVEL           Logging level: DEBUG, INFO, WARN, ERROR (default: INFO)
+  npx figma-tokens-mcp --figma-api-key=YOUR_KEY --stdio
 
 Options:
+  --figma-api-key=KEY Your Figma personal access token (required)
+  --stdio             Run in stdio mode for MCP (default)
   --version, -v       Show version number
   --help, -h          Show this help message
+
+Environment Variables (alternative to --figma-api-key):
+  FIGMA_ACCESS_TOKEN  Your Figma personal access token
+  LOG_LEVEL           Logging level: DEBUG, INFO, WARN, ERROR (default: INFO)
 
 For more information, visit: https://github.com/jhlee0409/figma-tokens-mcp
 `);
     process.exit(0);
   }
 
-  startServer().catch((error) => {
+  // Parse CLI arguments for Figma API key
+  let figmaApiKey: string | undefined;
+
+  for (const arg of process.argv) {
+    if (arg.startsWith('--figma-api-key=')) {
+      figmaApiKey = arg.split('=')[1];
+      break;
+    }
+  }
+
+  // Start server with CLI arg or environment variable
+  const token = figmaApiKey || process.env.FIGMA_ACCESS_TOKEN;
+  const config: ServerConfig = token ? { figmaAccessToken: token } : {};
+
+  startServer(config).catch((error) => {
     console.error('Failed to start server:', error);
     process.exit(1);
   });

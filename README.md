@@ -47,6 +47,19 @@ npx -y figma-tokens-mcp
   "mcpServers": {
     "figma-tokens": {
       "command": "npx",
+      "args": ["-y", "figma-tokens-mcp", "--figma-api-key=YOUR_KEY", "--stdio"]
+    }
+  }
+}
+```
+
+또는 환경변수 방식:
+
+```json
+{
+  "mcpServers": {
+    "figma-tokens": {
+      "command": "npx",
       "args": ["-y", "figma-tokens-mcp"],
       "env": {
         "FIGMA_ACCESS_TOKEN": "figd_YOUR_TOKEN_HERE"

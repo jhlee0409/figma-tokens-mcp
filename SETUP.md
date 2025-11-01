@@ -43,7 +43,26 @@
    open ~/Library/Application\ Support/Claude/claude_desktop_config.json
    ```
 
-2. **설정 추가**
+2. **설정 추가** (두 가지 방법 중 선택)
+
+   **방법 1: CLI 인자 (권장)** - Figma-Context-MCP와 동일
+   ```json
+   {
+     "mcpServers": {
+       "figma-tokens": {
+         "command": "npx",
+         "args": [
+           "-y",
+           "figma-tokens-mcp",
+           "--figma-api-key=figd_여기에_복사한_토큰_붙여넣기",
+           "--stdio"
+         ]
+       }
+     }
+   }
+   ```
+
+   **방법 2: 환경변수**
    ```json
    {
      "mcpServers": {
