@@ -652,6 +652,7 @@ try {
   }
 } catch {
   // Fallback for CJS
+  // eslint-disable-next-line no-undef
   isMainModule = typeof require !== 'undefined' && require.main === module;
 }
 
@@ -691,44 +692,5 @@ For more information, visit: https://github.com/jhlee0409/figma-tokens-mcp
   });
 }
 
-// Default export for Smithery CLI
-// Smithery CLI expects a function that takes { config } and returns a Server
-// DO NOT use createStatelessServer here - Smithery CLI handles HTTP transport
-export default function ({
-  config,
-  headers
-}: {
-  config?: ServerConfig;
-  headers?: Record<string, string>;
-}) {
-  // DEBUG: Log what we receive
-  console.error('[DEBUG] Smithery config:', JSON.stringify(config, null, 2));
-  console.error('[DEBUG] Smithery headers:', JSON.stringify(headers, null, 2));
-  console.error('[DEBUG] Environment vars:', {
-    FIGMA_ACCESS_TOKEN: process.env.FIGMA_ACCESS_TOKEN ? '(set)' : '(not set)',
-  });
-
-  // HTTP transport: Read token from Authorization: Bearer header (Smithery standard)
-  // stdio transport: Read from environment or config
-  let figmaToken: string | undefined;
-
-  // Extract token from Authorization: Bearer header
-  const authHeader = headers?.['authorization'] || headers?.['Authorization'];
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    figmaToken = authHeader.substring(7); // Remove "Bearer " prefix
-    console.error('[DEBUG] Token extracted from Authorization header');
-  }
-
-  // Fallback to other sources
-  if (!figmaToken) {
-    figmaToken = config?.figmaAccessToken || process.env.FIGMA_ACCESS_TOKEN;
-    console.error('[DEBUG] Token from fallback:', figmaToken ? '(found)' : '(not found)');
-  }
-
-  const serverConfig: ServerConfig = {
-    ...config,
-    ...(figmaToken ? { figmaAccessToken: figmaToken } : {}),
-  };
-
-  return createServer(serverConfig);
-}
+// Default export for backward compatibility
+export default createServer;

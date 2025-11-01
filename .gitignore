@@ -53,3 +53,4 @@ temp/
 # Package manager locks (keeping pnpm-lock.yaml)
 package-lock.json
 yarn.lock
+.vercel
