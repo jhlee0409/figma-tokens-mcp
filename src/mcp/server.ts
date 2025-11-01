@@ -32,6 +32,8 @@ import {
 } from './tools.js';
 import { createErrorResponse } from '../utils/mcp-errors.js';
 import { Logger, LogLevel } from '../utils/logger.js';
+import { fileURLToPath } from 'url';
+import { realpathSync } from 'fs';
 
 const SERVER_NAME = 'figma-tokens-mcp';
 const SERVER_VERSION = '0.1.0';
@@ -646,9 +648,15 @@ export async function startServer(config: ServerConfig = {}): Promise<void> {
 // Support both ESM (import.meta) and CJS (require.main) contexts
 let isMainModule = false;
 try {
-  // ESM check
-  if (typeof import.meta !== 'undefined' && typeof import.meta.url === 'string') {
-    isMainModule = import.meta.url === `file://${process.argv[1]}`;
+  // ESM check - resolve real paths to handle symlinks
+  if (
+    typeof import.meta !== 'undefined' &&
+    typeof import.meta.url === 'string' &&
+    process.argv[1]
+  ) {
+    const scriptPath = fileURLToPath(import.meta.url);
+    const argPath = realpathSync(process.argv[1]);
+    isMainModule = scriptPath === argPath;
   }
 } catch {
   // Fallback for CJS
