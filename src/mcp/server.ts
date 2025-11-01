@@ -343,7 +343,9 @@ const result = await extract_tokens({
           properties: {
             figmaFileUrl: {
               type: 'string',
-              description: 'Figma file URL (e.g., https://www.figma.com/file/{fileKey}/...)',
+              description:
+                'Full Figma file URL containing the file key. The URL must be in the format: https://www.figma.com/file/{fileKey}/... or https://www.figma.com/design/{fileKey}/... Example: https://www.figma.com/file/abc123def456/MyDesignSystem',
+              pattern: '^https://www\\.figma\\.com/(file|design)/[a-zA-Z0-9]+/',
             },
             tokenTypes: {
               type: 'array',
@@ -352,13 +354,16 @@ const result = await extract_tokens({
                 enum: ['colors', 'typography'],
               },
               description:
-                'Optional array of token types to extract. If not specified, all types are extracted.',
+                'Optional array of specific token types to extract. Available types: "colors" (color tokens from Variables or Styles), "typography" (text styles and font definitions). If omitted or empty, all available token types will be extracted.',
+              default: [],
+              examples: [['colors'], ['typography'], ['colors', 'typography']],
             },
             extractionStrategy: {
               type: 'string',
               enum: ['auto', 'variables', 'styles', 'mixed'],
               description:
-                'Extraction strategy: auto (detect best), variables (Variables only), styles (Styles only), mixed (both with conflict resolution). Default: auto',
+                'Strategy for extracting tokens from Figma: "auto" (automatically detect best method based on file content, recommended), "variables" (extract only from Figma Variables - modern approach), "styles" (extract only from Figma Styles - legacy approach), "mixed" (extract from both and resolve conflicts with priority to Variables). Default: "auto"',
+              default: 'auto',
             },
           },
           required: ['figmaFileUrl'],
@@ -377,25 +382,36 @@ const result = await extract_tokens({
           properties: {
             tokens: {
               type: 'object',
-              description: 'Design tokens object from extract_tokens',
+              description:
+                'Design tokens object obtained from the extract_tokens tool. Must be a valid token hierarchy containing token definitions grouped by type (e.g., colors, typography). The object structure should match the output format from extract_tokens.',
+              additionalProperties: true,
             },
             tailwindVersion: {
               type: 'string',
               enum: ['v3', 'v4'],
-              description: 'Tailwind CSS version. Default: v4',
+              description:
+                'Target Tailwind CSS version for generated configuration. "v3" generates a JavaScript/TypeScript configuration file compatible with Tailwind CSS v3.x (uses module.exports or ESM). "v4" generates CSS files with @theme directive for Tailwind CSS v4.x (modern CSS-based configuration). Default: "v4"',
+              default: 'v4',
             },
             preset: {
               type: 'string',
               enum: ['merge', 'replace'],
-              description: 'For v3: merge extends defaults, replace overrides them. Default: merge',
+              description:
+                'Configuration strategy for Tailwind v3 only (ignored for v4). "merge" extends Tailwind\'s default theme (recommended for adding custom tokens), "replace" completely overrides the default theme (use when you want full control). Default: "merge"',
+              default: 'merge',
             },
             outputPath: {
               type: 'string',
-              description: 'Output directory path. Default: ./',
+              description:
+                'Relative directory path where generated files will be placed. Must be a relative path (absolute paths are not allowed). Default: "./" (current directory). Example: "./config" or "./src/styles"',
+              default: './',
+              pattern: '^[^/].*',
             },
             typescript: {
               type: 'boolean',
-              description: 'Generate TypeScript config files. Default: true',
+              description:
+                'Whether to generate TypeScript files (.ts) instead of JavaScript (.js) for v3 configuration. For v4, this affects type definition generation. Default: true',
+              default: true,
             },
           },
           required: ['tokens'],
@@ -414,29 +430,43 @@ const result = await extract_tokens({
           properties: {
             componentName: {
               type: 'string',
-              description: 'Component name (must start with uppercase, e.g., Button, Card)',
+              description:
+                'Name of the component to generate. Must follow PascalCase convention (start with uppercase letter, only alphanumeric characters). Maximum length: 100 characters. Examples: "Button", "Card", "AlertDialog", "NavigationMenu"',
+              pattern: '^[A-Z][a-zA-Z0-9]*$',
+              minLength: 1,
+              maxLength: 100,
             },
             tokens: {
               type: 'object',
-              description: 'Design tokens object from extract_tokens',
+              description:
+                'Design tokens object obtained from the extract_tokens tool. The tokens will be used to generate component variants with appropriate styling based on color, typography, and other design token values.',
+              additionalProperties: true,
             },
             sectionUrl: {
               type: 'string',
               description:
-                'Optional Figma section URL for analysis (future enhancement, currently generates template-based component)',
+                'Optional Figma section/frame URL for visual analysis. Format: https://www.figma.com/file/{fileKey}/...?node-id=... Note: This is a future enhancement - currently, the tool generates a template-based component regardless of this parameter. In future versions, this will enable AI-powered component generation based on the actual Figma design.',
+              pattern: '^https://www\\.figma\\.com/(file|design)/[a-zA-Z0-9]+/.*\\?node-id=',
             },
             framework: {
               type: 'string',
               enum: ['react'],
-              description: 'Component framework. Default: react',
+              description:
+                'Target component framework. Currently only "react" is supported. The generated component will use React functional component syntax with hooks. Default: "react"',
+              default: 'react',
             },
             typescript: {
               type: 'boolean',
-              description: 'Generate TypeScript component. Default: true',
+              description:
+                'Whether to generate a TypeScript component (.tsx) with full type definitions, or a JavaScript component (.jsx). TypeScript provides better type safety and IDE support. Default: true',
+              default: true,
             },
             outputPath: {
               type: 'string',
-              description: 'Output directory path. Default: ./src/components',
+              description:
+                'Relative directory path where the component file will be created. Must be a relative path (absolute paths and path traversal are not allowed for security). Default: "./src/components". Example: "./components" or "./src/ui"',
+              default: './src/components',
+              pattern: '^[^/].*',
             },
           },
           required: ['componentName', 'tokens'],
