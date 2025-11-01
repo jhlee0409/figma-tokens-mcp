@@ -483,7 +483,7 @@ export async function generateComponent(
     context.logger.warn(`Absolute or traversal path detected, using default: ${outputPath}`);
     sanitizedPath = './src/components';
     warnings.push({
-      type: 'warning',
+      type: 'info',
       severity: 'medium',
       message: `Absolute or traversal paths are not allowed. Using default path: ${sanitizedPath}`,
     });

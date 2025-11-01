@@ -13,7 +13,6 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { extractTokens, convertToTailwind, generateComponent } from '../../src/mcp/tools';
 import type { ToolContext } from '../../src/mcp/types';
 import { createServer } from '../../src/mcp/server';
-import { CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';

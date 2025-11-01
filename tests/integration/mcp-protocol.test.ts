@@ -9,7 +9,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createServer } from '../../src/mcp/server';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 
@@ -286,10 +285,7 @@ describe('MCP Protocol Compliance', () => {
       // Create client for this server
       const [clientTransport2, serverTransport2] = InMemoryTransport.createLinkedPair();
       await serverWithoutToken.connect(serverTransport2);
-      const client2 = new Client(
-        { name: 'test-client-2', version: '1.0.0' },
-        { capabilities: {} }
-      );
+      const client2 = new Client({ name: 'test-client-2', version: '1.0.0' }, { capabilities: {} });
       await client2.connect(clientTransport2);
 
       const response = await client2.callTool({
