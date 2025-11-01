@@ -40,6 +40,7 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that a
 ## Key Features
 
 ### Design Token Extraction
+
 - Extract colors, typography, spacing, border radius, and more from Figma
 - Support for **Figma Variables** (modern, recommended)
 - Support for **Figma Styles** (legacy support for existing design systems)
@@ -48,6 +49,7 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that a
 - Hierarchical token structure generation
 
 ### Tailwind CSS Generation
+
 - **Tailwind v3**: JavaScript/TypeScript config with `extend` or `replace` presets
 - **Tailwind v4**: CSS variables with `@theme` directive + minimal config
 - Type-safe TypeScript output
@@ -55,6 +57,7 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that a
 - Token statistics and metadata
 
 ### React Component Generation
+
 - Generate React components with CVA variants
 - TypeScript and JavaScript support
 - Automatic prop types and variant configuration
@@ -62,6 +65,7 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that a
 - ForwardRef support
 
 ### Developer Experience
+
 - Type-safe TypeScript implementation
 - Comprehensive error handling with helpful suggestions
 - Detailed logging and diagnostics
@@ -159,11 +163,13 @@ See [docs/SETUP.md](docs/SETUP.md) for detailed installation instructions, troub
 Once configured, simply ask Claude to:
 
 1. **Extract tokens from Figma:**
+
    ```
    Extract design tokens from https://www.figma.com/file/abc123/Design-System
    ```
 
 2. **Convert to Tailwind:**
+
    ```
    Convert these tokens to Tailwind v4 configuration
    ```
@@ -177,52 +183,55 @@ Once configured, simply ask Claude to:
 
 This server provides 5 MCP tools:
 
-| Tool | Purpose |
-|------|---------|
-| `extract_tokens` | Extract design tokens from Figma files |
+| Tool                  | Purpose                                          |
+| --------------------- | ------------------------------------------------ |
+| `extract_tokens`      | Extract design tokens from Figma files           |
 | `convert_to_tailwind` | Convert tokens to Tailwind CSS config (v3 or v4) |
-| `generate_component` | Generate React components with CVA variants |
-| `health_check` | Check server health and configuration |
-| `get_server_info` | Get server capabilities and features |
+| `generate_component`  | Generate React components with CVA variants      |
+| `health_check`        | Check server health and configuration            |
+| `get_server_info`     | Get server capabilities and features             |
 
 ### Example Workflow
 
 ```typescript
 // 1. Extract tokens from Figma
 const result = await extract_tokens({
-  figmaFileUrl: "https://www.figma.com/file/abc123/Design-System",
-  extractionStrategy: "auto", // or "variables", "styles", "mixed"
-  tokenTypes: ["colors", "typography"]
+  figmaFileUrl: 'https://www.figma.com/file/abc123/Design-System',
+  extractionStrategy: 'auto', // or "variables", "styles", "mixed"
+  tokenTypes: ['colors', 'typography'],
 });
 
 // 2. Convert to Tailwind v4
 const tailwindConfig = await convert_to_tailwind({
   tokens: result.tokens,
-  tailwindVersion: "v4",
-  typescript: true
+  tailwindVersion: 'v4',
+  typescript: true,
 });
 
 // 3. Generate a Button component
 const component = await generate_component({
-  componentName: "Button",
+  componentName: 'Button',
   tokens: result.tokens,
-  typescript: true
+  typescript: true,
 });
 ```
 
 ## Documentation
 
 ### User Guides
+
 - **[Setup Guide](docs/SETUP.md)**: Detailed installation and configuration
 - **[Usage Guide](docs/USAGE.md)**: Complete tool usage with examples
 - **[API Reference](docs/API.md)**: Full API documentation
 
 ### Technical Documentation
+
 - **[Architecture](docs/ARCHITECTURE.md)**: System design and data flow
 - **[Contributing](CONTRIBUTING.md)**: How to contribute to the project
 - **[Changelog](CHANGELOG.md)**: Version history and releases
 
 ### Examples
+
 - **[Perfect Team](examples/perfect-team/)**: Using Variables exclusively
 - **[Legacy Team](examples/legacy-team/)**: Using Styles exclusively
 - **[Mixed Team](examples/mixed-team/)**: Using both Variables and Styles
@@ -230,18 +239,23 @@ const component = await generate_component({
 ## Use Cases
 
 ### Design System Migration
+
 Convert your Figma design system to code for the first time, or migrate from legacy Styles to modern Variables.
 
 ### Design-Code Sync
+
 Keep your codebase in sync with Figma as your design system evolves. Extract updated tokens whenever designs change.
 
 ### Multi-Brand Systems
+
 Extract tokens from different Figma files for different brands, generating separate Tailwind configs for each.
 
 ### Component Libraries
+
 Generate React components with design tokens baked in, ensuring perfect consistency with your Figma designs.
 
 ### Design Tokens Documentation
+
 Generate token documentation and usage examples automatically from your Figma files.
 
 ## Contributing
@@ -271,6 +285,7 @@ pnpm test
 ### Code Quality
 
 We maintain high code quality standards:
+
 - **TypeScript strict mode** enabled
 - **100% type coverage** on public APIs
 - **Comprehensive test suite** with Vitest
@@ -284,17 +299,20 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## Resources
 
 ### Official Documentation
+
 - [Model Context Protocol](https://modelcontextprotocol.io/) - MCP specification
 - [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) - SDK we use
 - [Figma API Documentation](https://www.figma.com/developers/api) - Figma REST API
 - [Tailwind CSS](https://tailwindcss.com/docs) - Tailwind documentation
 
 ### Related Projects
+
 - [Figma Tokens](https://github.com/tokens-studio/figma-plugin) - Figma plugin for token management
 - [Style Dictionary](https://github.com/amzn/style-dictionary) - Design token transformer
 - [CVA](https://cva.style/) - Class variance authority for React
 
 ### Community
+
 - [Issues](https://github.com/jhlee0409/figma-tokens-mcp/issues) - Report bugs or request features
 - [Discussions](https://github.com/jhlee0409/figma-tokens-mcp/discussions) - Ask questions and share ideas
 - [Pull Requests](https://github.com/jhlee0409/figma-tokens-mcp/pulls) - Contribute to the project
@@ -303,4 +321,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 **Made with ❤️ for designers and developers who believe design systems should be easy.**
 
-*Powered by [Model Context Protocol](https://modelcontextprotocol.io/)*
+_Powered by [Model Context Protocol](https://modelcontextprotocol.io/)_

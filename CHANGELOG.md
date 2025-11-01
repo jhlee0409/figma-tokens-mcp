@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned Features
+
 - Figma component analysis for smarter component generation
 - Support for additional token types (shadows, effects, gradients)
 - CSS-in-JS output formats (styled-components, emotion)
@@ -21,12 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added - Initial Release
 
 #### MCP Server
+
 - **Model Context Protocol integration** - Full MCP server implementation with stdio transport
 - **5 MCP tools** - extract_tokens, convert_to_tailwind, generate_component, health_check, get_server_info
 - **Claude Desktop integration** - Works seamlessly with Claude Desktop
 - **Environment variable configuration** - FIGMA_ACCESS_TOKEN for authentication
 
 #### Token Extraction
+
 - **Figma Variables extraction** - Extract modern Variables with full support for:
   - Color variables with RGBA to hex conversion
   - Typography variables (font family, weight, size)
@@ -39,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Style to node mapping
   - Batch node fetching for efficiency
 - **Pattern detection** - Automatic naming pattern detection:
-  - Separator detection (/, -, _, .)
+  - Separator detection (/, -, \_, .)
   - Case style detection (kebab, camel, snake, pascal)
   - Hierarchy depth analysis
   - Confidence scoring
@@ -50,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Detailed warnings and recommendations
 
 #### Tailwind CSS Generation
+
 - **Tailwind v3 support** - Generate JavaScript/TypeScript config:
   - `merge` preset - Extends Tailwind defaults
   - `replace` preset - Overrides Tailwind defaults
@@ -70,6 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Missing dependencies
 
 #### Component Generation
+
 - **React component generation** - Create React components with:
   - CVA (class-variance-authority) integration
   - Variant configuration from design tokens
@@ -89,6 +94,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Border radius tokens → rounded- utilities
 
 #### Developer Experience
+
 - **TypeScript strict mode** - Full type safety throughout codebase
 - **Comprehensive error handling** - Custom error types for:
   - Authentication errors (FigmaAuthError)
@@ -106,6 +112,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Health checks** - Server health monitoring and diagnostics
 
 #### Testing
+
 - **Comprehensive test suite** - Full test coverage using Vitest:
   - Unit tests for all modules
   - Integration tests for complete workflows
@@ -124,12 +131,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Utility function tests
 
 #### Code Quality
+
 - **ESLint configuration** - TypeScript-specific linting rules
 - **Prettier formatting** - Consistent code formatting
 - **Type checking** - Strict TypeScript compilation
 - **Pre-commit hooks** - Automated quality checks (planned)
 
 #### Documentation
+
 - **Complete README** - Project overview, quick start, installation
 - **Setup guide** (docs/SETUP.md) - Detailed installation and configuration
 - **Usage guide** (docs/USAGE.md) - Complete tool usage with examples
@@ -144,33 +153,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Known Limitations
 
 #### Token Types
+
 - Only colors and typography currently supported
 - Shadows, effects, and gradients planned for future releases
 - Grid and layout tokens not yet supported
 
 #### Component Generation
+
 - Template-based only (MVP)
 - Figma component analysis planned for future releases
 - React framework only
 - Limited to common component patterns
 
 #### Extraction Strategies
+
 - `auto` strategy currently defaults to `mixed`
 - Future: Intelligent detection based on file content
 - No support for Figma plugins or extensions
 
 #### MCP Integration
+
 - stdio transport only
 - No WebSocket or HTTP transport yet
 - Claude Desktop is primary client
 
 ### Performance
+
 - API responses cached for 5 minutes
 - Batch node fetching for efficiency
 - Alias resolution with circular detection
 - No parallel extraction (sequential API calls)
 
 ### Security
+
 - Access tokens stored in environment variables only
 - No token encryption at rest
 - Read-only Figma API access
@@ -179,6 +194,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Future Roadmap
 
 #### v0.2.0 (Planned)
+
 - Shadow and effect token support
 - Gradient token support
 - Component variant analysis from Figma
@@ -186,6 +202,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Watch mode for auto-regeneration
 
 #### v0.3.0 (Planned)
+
 - Vue component generation
 - Svelte component generation
 - CSS-in-JS output formats
@@ -193,6 +210,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Figma plugin integration
 
 #### v1.0.0 (Planned)
+
 - Stable API
 - Production-ready
 - Full test coverage
@@ -203,6 +221,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Release Notes Format
 
 Each release includes:
+
 - **Added** - New features
 - **Changed** - Changes in existing functionality
 - **Deprecated** - Soon-to-be removed features
@@ -223,6 +242,7 @@ This is the initial release, no upgrade needed.
 ---
 
 **Note**: This project follows [Semantic Versioning](https://semver.org/):
+
 - **MAJOR** version - Incompatible API changes
 - **MINOR** version - Backwards-compatible functionality
 - **PATCH** version - Backwards-compatible bug fixes

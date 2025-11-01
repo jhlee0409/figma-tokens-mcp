@@ -51,6 +51,7 @@ Before contributing, ensure you have:
 
 1. **Fork the repository** on GitHub
 2. **Clone your fork**:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/figma-tokens-mcp.git
    cd figma-tokens-mcp
@@ -114,6 +115,7 @@ Use the `devbird/` prefix for all feature branches:
 ### Typical Workflow
 
 1. **Create a feature branch**:
+
    ```bash
    git checkout -b devbird/my-feature
    ```
@@ -124,6 +126,7 @@ Use the `devbird/` prefix for all feature branches:
    - Update documentation as needed
 
 3. **Run checks locally**:
+
    ```bash
    pnpm lint
    pnpm format:check
@@ -132,6 +135,7 @@ Use the `devbird/` prefix for all feature branches:
    ```
 
 4. **Commit your changes**:
+
    ```bash
    git add .
    git commit -m "feat: add new feature description"
@@ -146,6 +150,7 @@ Use the `devbird/` prefix for all feature branches:
    - `chore:` - Build process or tooling changes
 
 5. **Push to your fork**:
+
    ```bash
    git push origin devbird/my-feature
    ```
@@ -162,6 +167,7 @@ Use the `devbird/` prefix for all feature branches:
 - **No unused variables**: Remove or prefix with `_`
 
 **Example**:
+
 ```typescript
 // Good
 function calculateTotal(items: Item[]): number {
@@ -191,6 +197,7 @@ function calculateTotal(items: any) {
 - **Small functions**: Keep functions under 50 lines when possible
 
 **Example**:
+
 ```typescript
 // External imports
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -211,7 +218,8 @@ import type { ServerConfig } from './mcp/types.js';
 - **TODO comments**: Include your GitHub username
 
 **Example**:
-```typescript
+
+````typescript
 /**
  * Extract design tokens from a Figma file.
  *
@@ -232,7 +240,7 @@ export async function extractTokens(
 ): Promise<ExtractedTokens> {
   // Implementation
 }
-```
+````
 
 ### Error Handling
 
@@ -242,6 +250,7 @@ export async function extractTokens(
 - **Validate early**: Check inputs at function entry
 
 **Example**:
+
 ```typescript
 if (!fileKey) {
   throw new FigmaInvalidUrlError('File key is required');
@@ -267,6 +276,7 @@ try {
 We use **Vitest** for testing. All new features must include tests.
 
 **Test file structure**:
+
 ```
 tests/
 ├── mcp/
@@ -281,6 +291,7 @@ tests/
 ```
 
 **Example test**:
+
 ```typescript
 import { describe, it, expect, beforeEach } from 'vitest';
 import { FigmaAPIClient } from '../src/core/extractors/figma-api.js';
@@ -290,14 +301,12 @@ describe('FigmaAPIClient', () => {
 
   beforeEach(() => {
     client = new FigmaAPIClient({
-      accessToken: 'test-token'
+      accessToken: 'test-token',
     });
   });
 
   it('should parse Figma URLs correctly', () => {
-    const result = client.parseFigmaUrl(
-      'https://www.figma.com/file/abc123/My-File'
-    );
+    const result = client.parseFigmaUrl('https://www.figma.com/file/abc123/My-File');
 
     expect(result.fileKey).toBe('abc123');
     expect(result.type).toBe('file');
@@ -384,25 +393,31 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Motivation
+
 Why is this change needed?
 
 ## Changes
+
 - Added X feature
 - Fixed Y bug
 - Updated Z documentation
 
 ## Testing
+
 - [ ] Unit tests added/updated
 - [ ] Integration tests added/updated
 - [ ] Manual testing performed
 
 ## Screenshots (if applicable)
+
 Add screenshots or GIFs
 
 ## Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Tests pass locally
 - [ ] Documentation updated
@@ -442,6 +457,7 @@ A clear description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce:
+
 1. Run command '...'
 2. With parameters '...'
 3. See error
@@ -453,6 +469,7 @@ What you expected to happen.
 What actually happened.
 
 **Environment**
+
 - OS: [e.g., macOS 13.0]
 - Node.js: [e.g., 18.17.0]
 - Package version: [e.g., 0.1.0]
