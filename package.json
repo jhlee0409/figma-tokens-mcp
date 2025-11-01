@@ -4,6 +4,7 @@
   "description": "Model Context Protocol (MCP) server for extracting design tokens from Figma and generating Tailwind CSS configurations",
   "type": "module",
   "main": "dist/index.js",
+  "module": "src/index.ts",
   "types": "dist/index.d.ts",
   "bin": {
     "figma-tokens-mcp": "dist/mcp/server.js"
@@ -14,6 +15,8 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "smithery:dev": "npx @smithery/cli dev",
+    "smithery:build": "npx @smithery/cli build",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -63,6 +66,7 @@
     "class-variance-authority": "^0.7.1"
   },
   "devDependencies": {
+    "@smithery/cli": "^0.6.0",
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.2",
     "@typescript-eslint/eslint-plugin": "^8.18.2",
