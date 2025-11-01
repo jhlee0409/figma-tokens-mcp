@@ -32,9 +32,6 @@ import { Logger, LogLevel } from '../utils/logger.js';
 const SERVER_NAME = 'figma-tokens-mcp';
 const SERVER_VERSION = '0.1.0';
 
-// Export server instance for Smithery HTTP transport
-export let serverInstance: Server | null = null;
-
 /**
  * Creates and configures the MCP server
  */
@@ -55,9 +52,6 @@ export function createServer(config: ServerConfig = {}): Server {
       },
     }
   );
-
-  // Store server instance for HTTP transport
-  serverInstance = server;
 
   // Create tool context
   const toolContext: ToolContext = {
@@ -331,11 +325,6 @@ export async function startServer(config: ServerConfig = {}): Promise<void> {
   });
 }
 
-// Initialize server instance immediately for Smithery HTTP transport
-if (!serverInstance) {
-  createServer();
-}
-
 // Run the server if this is the main module
 // Support both ESM (import.meta) and CJS (require.main) contexts
 let isMainModule = false;
@@ -386,4 +375,7 @@ For more information, visit: https://github.com/jhlee0409/figma-tokens-mcp
 }
 
 // Default export for Smithery
-export default createServer;
+// Smithery expects a function that receives config and returns a server
+export default function ({ config = {} }: { config?: ServerConfig } = {}) {
+  return createServer(config);
+}
