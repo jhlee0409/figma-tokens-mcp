@@ -23,6 +23,7 @@ The figma-tokens-mcp server has been comprehensively validated against MCP speci
 ## 1. Testing Summary
 
 ### 1.1 Existing Test Suite
+
 - **Total Test Files:** 21
 - **Total Tests:** 528
 - **Pass Rate:** 100%
@@ -30,21 +31,23 @@ The figma-tokens-mcp server has been comprehensively validated against MCP speci
 - **Code Coverage:** 80.07%
 
 #### Coverage Breakdown by Module
-| Module | Statements | Branches | Functions | Lines |
-|--------|-----------|----------|-----------|-------|
-| **Overall** | 80.07% | 86.74% | 90.00% | 80.07% |
-| core/analyzers | 92.95% | 87.98% | 97.05% | 92.95% |
-| core/converters | 87.21% | 83.79% | 100.00% | 87.21% |
-| core/extractors | 84.72% | 84.48% | 85.71% | 84.72% |
-| core/generators | 96.70% | 92.30% | 95.83% | 96.70% |
-| **src/mcp** | **21.49%** | **48.27%** | **35.71%** | **21.49%** |
-| utils | 98.96% | 97.81% | 100.00% | 98.96% |
+
+| Module          | Statements | Branches   | Functions  | Lines      |
+| --------------- | ---------- | ---------- | ---------- | ---------- |
+| **Overall**     | 80.07%     | 86.74%     | 90.00%     | 80.07%     |
+| core/analyzers  | 92.95%     | 87.98%     | 97.05%     | 92.95%     |
+| core/converters | 87.21%     | 83.79%     | 100.00%    | 87.21%     |
+| core/extractors | 84.72%     | 84.48%     | 85.71%     | 84.72%     |
+| core/generators | 96.70%     | 92.30%     | 95.83%     | 96.70%     |
+| **src/mcp**     | **21.49%** | **48.27%** | **35.71%** | **21.49%** |
+| utils           | 98.96%     | 97.81%     | 100.00%    | 98.96%     |
 
 **Note:** The low coverage in `src/mcp` (21.49%) is expected as it represents the MCP server integration layer which requires end-to-end testing.
 
 ### 1.2 New Test Suites Created
 
 #### MCP Protocol Compliance Tests (`tests/integration/mcp-protocol.test.ts`)
+
 - **Purpose:** Validate MCP specification compliance
 - **Coverage:**
   - Server initialization and configuration
@@ -55,6 +58,7 @@ The figma-tokens-mcp server has been comprehensively validated against MCP speci
   - JSON schema validation
 
 #### E2E Workflow Tests (`tests/integration/e2e-workflows.test.ts`)
+
 - **Purpose:** Test complete user workflows
 - **Scenarios Covered:**
   1. **"Perfect Team"** - Variables only extraction
@@ -68,6 +72,7 @@ The figma-tokens-mcp server has been comprehensively validated against MCP speci
   - Error recovery
 
 #### Security Validation Tests (`tests/integration/security-validation.test.ts`)
+
 - **Purpose:** Validate security best practices
 - **Coverage:**
   - Token leakage prevention
@@ -87,6 +92,7 @@ The figma-tokens-mcp server has been comprehensively validated against MCP speci
 All 5 tools are correctly implemented according to MCP specification:
 
 #### 1. `extract_tokens`
+
 - **Status:** ✅ Fully Compliant
 - **JSON Schema:** Valid
 - **Required Parameters:** `figmaFileUrl` ✅
@@ -95,6 +101,7 @@ All 5 tools are correctly implemented according to MCP specification:
 - **Error Handling:** Comprehensive
 
 #### 2. `convert_to_tailwind`
+
 - **Status:** ✅ Fully Compliant
 - **JSON Schema:** Valid
 - **Required Parameters:** `tokens` ✅
@@ -103,6 +110,7 @@ All 5 tools are correctly implemented according to MCP specification:
 - **Validation:** Strong token structure validation
 
 #### 3. `generate_component`
+
 - **Status:** ✅ Fully Compliant
 - **JSON Schema:** Valid
 - **Required Parameters:** `componentName`, `tokens` ✅
@@ -110,11 +118,13 @@ All 5 tools are correctly implemented according to MCP specification:
 - **Validation:** Component name format validation with regex
 
 #### 4. `health_check`
+
 - **Status:** ✅ Fully Compliant
 - **Returns:** Server health status, version, timestamp, Figma token configuration status
 - **Use Case:** Monitoring and debugging
 
 #### 5. `get_server_info`
+
 - **Status:** ✅ Fully Compliant
 - **Returns:** Server metadata, capabilities list, features list
 - **Use Case:** Capability discovery
@@ -122,18 +132,20 @@ All 5 tools are correctly implemented according to MCP specification:
 ### 2.2 Request/Response Format ✅
 
 All responses follow MCP protocol format:
+
 ```typescript
 {
   content: [
     {
       type: 'text',
-      text: JSON.stringify(result, null, 2)
-    }
-  ]
+      text: JSON.stringify(result, null, 2),
+    },
+  ];
 }
 ```
 
 Error responses include:
+
 ```typescript
 {
   isError: true,
@@ -160,6 +172,7 @@ Error responses include:
 ### 3.1 Token Extraction
 
 #### Variables Extraction ✅
+
 - **API Integration:** Functional
 - **RGBA to Hex Conversion:** Working correctly
 - **Alias Resolution:** Fully implemented
@@ -170,6 +183,7 @@ Error responses include:
 - **Caching:** 5-minute TTL implemented
 
 #### Styles Extraction ✅
+
 - **Color Styles:** Solid colors, gradients, alpha channel support
 - **Typography Styles:** Font family, size, weight, line height, etc.
 - **Batch Processing:** Efficient node fetching with configurable batch size
@@ -177,6 +191,7 @@ Error responses include:
 - **Rem Conversion:** Optional with configurable base
 
 #### Mixed Extraction (Variables + Styles) ✅
+
 - **Conflict Detection:** Working
 - **Conflict Resolution:** `variables_priority` and `styles_priority` strategies
 - **Warnings:** Helpful conflict warnings generated
@@ -185,6 +200,7 @@ Error responses include:
 ### 3.2 Tailwind Conversion
 
 #### Tailwind v3 ✅
+
 - **Preset:** `merge` (extend defaults) and `replace` (override)
 - **TypeScript:** Config generation with types
 - **JavaScript:** Config generation
@@ -192,12 +208,14 @@ Error responses include:
 - **Validation:** CSS and JS syntax validation
 
 #### Tailwind v4 ✅
+
 - **@theme Directive:** Correct CSS variable generation
 - **CSS Variables:** Proper naming with `--` prefix
 - **Minimal Config:** Streamlined configuration
 - **TypeScript:** Type-safe config generation
 
 ### 3.3 React Component Generation ✅
+
 - **CVA Integration:** class-variance-authority properly used
 - **Variants:** Extracted from token structure
 - **TypeScript:** .tsx generation with full types
@@ -212,46 +230,54 @@ Error responses include:
 ### 4.1 Token Security ✅ PASS
 
 **Figma Access Token Protection:**
+
 - ✅ Not exposed in error messages
 - ✅ Not logged in debug/info logs
 - ✅ Not included in MCP responses
 - ✅ Not shown in server info endpoint
 
 **Recommendations:**
+
 - Consider implementing token rotation mechanism
 - Add rate limiting for API calls
 
 ### 4.2 URL Validation ⚠️ NEEDS IMPROVEMENT
 
 **Current Implementation:**
+
 - ✅ Validates Figma domain (figma.com only)
 - ✅ Rejects non-Figma URLs
 - ✅ Parses file key correctly
 - ⚠️ Error messages include full URL (could expose sensitive paths)
 
 **Issues Found:**
+
 ```
 URL must be from figma.com domain: https://evil.com/../../etc/passwd
 ```
 
 **Recommendation:**
+
 ```typescript
 // Instead of showing full URL in error:
-"Invalid Figma URL format. Please provide a valid figma.com file URL."
+'Invalid Figma URL format. Please provide a valid figma.com file URL.';
 // Log full URL only to server logs for debugging
 ```
 
 ### 4.3 Path Traversal Prevention ⚠️ NEEDS IMPROVEMENT
 
 **Current Implementation:**
+
 - ⚠️ No path sanitization for output paths
 - ⚠️ Absolute paths are accepted
 
 **Issues Found:**
+
 - Test with path `/etc/components` was accepted without sanitization
 - Test with path `../../../etc/passwd` may be vulnerable
 
 **Recommendation:**
+
 ```typescript
 function sanitizeOutputPath(path: string): string {
   // Remove leading slashes
@@ -272,16 +298,19 @@ function sanitizeOutputPath(path: string): string {
 ### 4.4 Input Validation ⚠️ NEEDS IMPROVEMENT
 
 **Current Implementation:**
+
 - ✅ Component name validation (regex pattern)
 - ✅ Token structure validation
 - ⚠️ No length limits on component names
 - ⚠️ No protection against special characters in token names
 
 **Issues Found:**
+
 1. **Long Component Names:** 1000-character component name accepted
 2. **Special Characters in Token Names:** CSS variable names can include `<script>`, `'; DROP TABLE`, etc.
 
 **Recommendation:**
+
 ```typescript
 // Component name validation
 const MAX_COMPONENT_NAME_LENGTH = 100;
@@ -311,10 +340,12 @@ function sanitizeCSSVariableName(name: string): string {
 ### 4.6 DoS Prevention ⚠️ NEEDS IMPROVEMENT
 
 **Current Implementation:**
+
 - ⚠️ No depth limit for nested token structures
 - ⚠️ No size limit for token arrays
 
 **Recommendation:**
+
 ```typescript
 const MAX_TOKEN_DEPTH = 10;
 const MAX_TOKENS_COUNT = 10000;
@@ -339,15 +370,18 @@ function validateTokenDepth(obj: unknown, depth = 0): void {
 ### 5.1 Benchmark Results
 
 **Token Extraction:**
+
 - Small dataset (< 50 tokens): < 1 second
 - Medium dataset (50-200 tokens): < 2 seconds
 - Large dataset (200+ tokens): < 5 seconds
 
 **Conversion:**
+
 - Tailwind v3: < 500ms
 - Tailwind v4: < 500ms
 
 **Component Generation:**
+
 - Simple component: < 100ms
 - Complex component: < 300ms
 
@@ -358,6 +392,7 @@ function validateTokenDepth(obj: unknown, depth = 0): void {
 - **Memory Management:** Could benefit from LRU eviction policy
 
 **Recommendation:**
+
 ```typescript
 // Implement LRU cache with size limit
 const MAX_CACHE_SIZE = 100;
@@ -386,12 +421,14 @@ Comprehensive error handling with custom error classes:
 ### 6.2 Error Messages ✅
 
 Error messages are:
+
 - Clear and actionable
 - Include error codes for programmatic handling
 - Provide context and suggestions
 - Safe (no sensitive data exposure)
 
 Example:
+
 ```
 MCPToolError: Component name must start with uppercase letter and contain only alphanumeric characters.
 Tool: generate_component
@@ -487,14 +524,14 @@ Code: INVALID_COMPONENT_NAME
 
 ### 8.2 Coverage Goals
 
-| Area | Before | After | Target | Status |
-|------|--------|-------|--------|--------|
-| Overall | 80.07% | 80.07% | 80% | ✅ Met |
-| MCP Layer | 21.49% | ~40%* | 60% | ⚠️ Needs work |
-| Security Tests | 0% | 100% | 100% | ✅ Met |
-| E2E Tests | 0% | 100% | 100% | ✅ Met |
+| Area           | Before | After  | Target | Status        |
+| -------------- | ------ | ------ | ------ | ------------- |
+| Overall        | 80.07% | 80.07% | 80%    | ✅ Met        |
+| MCP Layer      | 21.49% | ~40%\* | 60%    | ⚠️ Needs work |
+| Security Tests | 0%     | 100%   | 100%   | ✅ Met        |
+| E2E Tests      | 0%     | 100%   | 100%   | ✅ Met        |
 
-*Estimated improvement with new tests (actual coverage requires test fixes)
+\*Estimated improvement with new tests (actual coverage requires test fixes)
 
 ---
 
@@ -574,6 +611,7 @@ Code: INVALID_COMPONENT_NAME
 The **figma-tokens-mcp** server is **production-ready** with minor security improvements needed. The implementation demonstrates:
 
 ✅ **Strengths:**
+
 - Excellent test coverage (80.07%)
 - Comprehensive error handling
 - Well-structured, maintainable code
@@ -582,6 +620,7 @@ The **figma-tokens-mcp** server is **production-ready** with minor security impr
 - Good performance characteristics
 
 ⚠️ **Areas for Improvement:**
+
 - Path traversal prevention
 - Input sanitization for generated code
 - DoS prevention measures
