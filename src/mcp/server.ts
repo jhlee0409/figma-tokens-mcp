@@ -10,6 +10,8 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
+  ListPromptsRequestSchema,
+  GetPromptRequestSchema,
   Tool,
 } from '@modelcontextprotocol/sdk/types.js';
 import type {
@@ -49,6 +51,7 @@ export function createServer(config: ServerConfig = {}): Server {
     {
       capabilities: {
         tools: {},
+        prompts: {},
       },
     }
   );
@@ -63,6 +66,76 @@ export function createServer(config: ServerConfig = {}): Server {
       error: (msg, err?) => logger.error(msg, err),
     },
   };
+
+  // List available prompts
+  server.setRequestHandler(ListPromptsRequestSchema, () => {
+    return {
+      prompts: [
+        {
+          name: 'extract-figma-tokens',
+          description: 'Extract design tokens from a Figma file',
+          arguments: [
+            {
+              name: 'fileUrl',
+              description: 'Figma file URL',
+              required: true,
+            },
+          ],
+        },
+        {
+          name: 'generate-tailwind-v4',
+          description: 'Generate Tailwind CSS v4 configuration from tokens',
+          arguments: [
+            {
+              name: 'tokensJson',
+              description: 'Design tokens in JSON format (from extract_tokens)',
+              required: true,
+            },
+          ],
+        },
+      ],
+    };
+  });
+
+  // Get prompt content
+  server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+    const { name, arguments: args } = request.params;
+
+    switch (name) {
+      case 'extract-figma-tokens': {
+        const fileUrl = args?.fileUrl as string;
+        return {
+          messages: [
+            {
+              role: 'user' as const,
+              content: {
+                type: 'text' as const,
+                text: `Please extract design tokens from this Figma file: ${fileUrl}\n\nUse the extract_tokens tool with the following parameters:\n- figmaFileUrl: ${fileUrl}\n- extractionStrategy: auto (to automatically detect the best extraction method)\n\nThis will extract colors, typography, and other design tokens from the Figma file.`,
+              },
+            },
+          ],
+        };
+      }
+
+      case 'generate-tailwind-v4': {
+        const tokensJson = args?.tokensJson as string;
+        return {
+          messages: [
+            {
+              role: 'user' as const,
+              content: {
+                type: 'text' as const,
+                text: `Please convert these design tokens to Tailwind CSS v4 configuration:\n\n${tokensJson}\n\nUse the convert_to_tailwind tool with:\n- tokens: (the tokens object above)\n- tailwindVersion: v4\n- typescript: true\n\nThis will generate a modern Tailwind v4 configuration with CSS variables.`,
+              },
+            },
+          ],
+        };
+      }
+
+      default:
+        throw new Error(`Unknown prompt: ${name}`);
+    }
+  });
 
   // List available tools
   server.setRequestHandler(ListToolsRequestSchema, () => {
@@ -96,6 +169,10 @@ export function createServer(config: ServerConfig = {}): Server {
           },
           required: ['figmaFileUrl'],
         },
+        annotations: {
+          readOnlyHint: true,
+          idempotentHint: true,
+        },
       },
       {
         name: 'convert_to_tailwind',
@@ -128,6 +205,10 @@ export function createServer(config: ServerConfig = {}): Server {
             },
           },
           required: ['tokens'],
+        },
+        annotations: {
+          readOnlyHint: false,
+          idempotentHint: true,
         },
       },
       {
@@ -166,6 +247,10 @@ export function createServer(config: ServerConfig = {}): Server {
           },
           required: ['componentName', 'tokens'],
         },
+        annotations: {
+          readOnlyHint: false,
+          idempotentHint: true,
+        },
       },
       {
         name: 'health_check',
@@ -175,6 +260,10 @@ export function createServer(config: ServerConfig = {}): Server {
           properties: {},
           required: [],
         },
+        annotations: {
+          readOnlyHint: true,
+          idempotentHint: true,
+        },
       },
       {
         name: 'get_server_info',
@@ -183,6 +272,10 @@ export function createServer(config: ServerConfig = {}): Server {
           type: 'object',
           properties: {},
           required: [],
+        },
+        annotations: {
+          readOnlyHint: true,
+          idempotentHint: true,
         },
       },
     ];
