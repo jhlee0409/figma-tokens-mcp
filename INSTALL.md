@@ -2,6 +2,8 @@
 
 Figma Tokens MCP를 설치하는 다양한 방법을 제공합니다.
 
+> 🔒 **중요**: 이 프로젝트는 오픈소스 MCP 서버입니다. **각 사용자가 자신의 Figma Personal Access Token을 사용**해야 하며, 서버는 토큰을 저장하거나 공유하지 않습니다.
+
 ## 🚀 빠른 설치
 
 ### 방법 1: **Vercel 배포** (가장 추천!)
@@ -13,17 +15,15 @@ npm i -g vercel
 # 2. 프로젝트 배포
 vercel
 
-# 3. 환경 변수 설정
-vercel env add FIGMA_ACCESS_TOKEN
-
-# 4. Claude Code에서 사용
+# 3. Claude Code에서 사용 (각 사용자가 자신의 토큰 사용)
 claude mcp add figma-tokens-mcp \
   "https://your-project.vercel.app/api/mcp" \
-  --transport http
+  --transport http \
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
 ```
 
 **장점:**
-- ✅ 헤더 설정 불필요 (환경 변수로 자동 처리)
+- ✅ 각 사용자가 자신의 Figma 토큰 사용
 - ✅ 무료 배포 가능
 - ✅ 자동 HTTPS
 - ✅ 팀 공유 용이
@@ -136,7 +136,7 @@ https://www.figma.com/file/YOUR_FILE_ID/Design-System
 claude mcp add figma-tokens-mcp \
   "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp" \
   --transport http \
-  --header "X-Figma-Token: YOUR_TOKEN"
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
 ```
 
 **stdio Transport:**
@@ -167,13 +167,13 @@ Figma에서 새 토큰을 생성하고 설정을 업데이트하세요.
 ## 💡 팁
 
 ### 여러 환경에서 사용
-팀에서 사용하는 경우, HTTP transport를 추천합니다:
+팀에서 사용하는 경우, Vercel 배포를 추천합니다:
 ```bash
-# 모든 팀원이 같은 명령어 사용
+# 각 팀원이 자신의 Figma 토큰 사용
 claude mcp add figma-tokens-mcp \
-  "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp" \
+  "https://your-project.vercel.app/api/mcp" \
   --transport http \
-  --header "X-Figma-Token: TEAM_SHARED_TOKEN"
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
 ```
 
 ### 보안

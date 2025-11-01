@@ -8,7 +8,9 @@
 
 > **Bridge the gap between Figma design systems and Tailwind CSS with intelligent design token extraction and conversion.**
 
-A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that automatically extracts design tokens from Figma files and generates production-ready Tailwind CSS configurations, complete with component generation capabilities.
+An **open-source** [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that automatically extracts design tokens from Figma files and generates production-ready Tailwind CSS configurations, complete with component generation capabilities.
+
+> 🔒 **Security**: Each user uses their own Figma Personal Access Token. This server does not store or share tokens between users.
 
 ## Table of Contents
 
@@ -81,16 +83,14 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that a
 # 1. Vercel에 배포
 vercel
 
-# 2. 환경 변수 설정
-vercel env add FIGMA_ACCESS_TOKEN
-
-# 3. Claude Code에서 사용
+# 2. Claude Code에서 사용 (각 사용자가 자신의 토큰 사용)
 claude mcp add figma-tokens-mcp \
   "https://your-project.vercel.app/api/mcp" \
-  --transport http
+  --transport http \
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
 ```
 
-> ✨ **장점**: 환경 변수만 설정하면 끝! 헤더 설정 불필요, 무료 배포, 팀 공유 용이
+> ✨ **장점**: 각 사용자가 자신의 Figma 토큰 사용, 무료 배포, 팀 공유 용이
 
 [상세 배포 가이드 보기](VERCEL_DEPLOY.md)
 

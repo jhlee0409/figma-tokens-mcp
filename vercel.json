@@ -1,10 +1,4 @@
 {
   "buildCommand": "pnpm build",
-  "installCommand": "pnpm install",
-  "env": {
-    "FIGMA_ACCESS_TOKEN": {
-      "type": "secret",
-      "description": "Figma Personal Access Token for API access"
-    }
-  }
+  "installCommand": "pnpm install"
 }

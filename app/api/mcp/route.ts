@@ -3,9 +3,11 @@
  *
  * This route wraps the existing Figma Tokens MCP server
  * and makes it accessible via HTTP/SSE transport on Vercel.
+ *
+ * Users provide their own Figma tokens via Authorization header.
  */
 
-import { createMcpHandler } from 'mcp-handler';
+import { createMcpHandler, withMcpAuth } from 'mcp-handler';
 import { z } from 'zod';
 import {
   extractTokens,
@@ -18,10 +20,28 @@ import type {
   GenerateComponentInput,
   ToolContext,
 } from '../../../src/mcp/types.js';
+import type { AuthInfo } from 'mcp-handler';
 
-// Create tool context with Figma token from environment
-const createToolContext = (): ToolContext => ({
-  figmaAccessToken: process.env.FIGMA_ACCESS_TOKEN,
+// Verify Figma token (we just pass it through, Figma API will validate)
+const verifyFigmaToken = async (
+  req: Request,
+  bearerToken?: string
+): Promise<AuthInfo | undefined> => {
+  if (!bearerToken) {
+    return undefined;
+  }
+
+  // Return auth info with the Figma token
+  return {
+    token: bearerToken,
+    scopes: ['figma:read'],
+    clientId: 'figma-user',
+  };
+};
+
+// Create tool context from auth info
+const createToolContext = (authInfo?: AuthInfo): ToolContext => ({
+  figmaAccessToken: authInfo?.token,
   logger: {
     debug: (msg) => console.debug('[MCP]', msg),
     info: (msg) => console.log('[MCP]', msg),
@@ -33,8 +53,6 @@ const createToolContext = (): ToolContext => ({
 // Create MCP handler
 const handler = createMcpHandler(
   async (server) => {
-    const toolContext = createToolContext();
-
     // Register extract_tokens tool
     server.tool(
       'extract_tokens',
@@ -44,7 +62,8 @@ const handler = createMcpHandler(
         tokenTypes: z.array(z.enum(['colors', 'typography'])).optional(),
         extractionStrategy: z.enum(['auto', 'variables', 'styles', 'mixed']).optional(),
       },
-      async (input) => {
+      async (input, extra) => {
+        const toolContext = createToolContext(extra.authInfo);
         const result = await extractTokens(input as ExtractTokensInput, toolContext);
         return {
           content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
@@ -63,7 +82,8 @@ const handler = createMcpHandler(
         outputPath: z.string().optional(),
         typescript: z.boolean().optional(),
       },
-      async (input) => {
+      async (input, extra) => {
+        const toolContext = createToolContext(extra.authInfo);
         const result = await convertToTailwind(input as ConvertToTailwindInput, toolContext);
         return {
           content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
@@ -83,7 +103,8 @@ const handler = createMcpHandler(
         typescript: z.boolean().optional(),
         outputPath: z.string().optional(),
       },
-      async (input) => {
+      async (input, extra) => {
+        const toolContext = createToolContext(extra.authInfo);
         const result = await generateComponent(input as GenerateComponentInput, toolContext);
         return {
           content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
@@ -96,7 +117,8 @@ const handler = createMcpHandler(
       'health_check',
       'Check if the MCP server is running and healthy',
       {},
-      async () => {
+      async (_, extra) => {
+        const toolContext = createToolContext(extra.authInfo);
         const result = {
           status: 'healthy',
           timestamp: new Date().toISOString(),
@@ -114,7 +136,8 @@ const handler = createMcpHandler(
       'get_server_info',
       'Get information about the MCP server',
       {},
-      async () => {
+      async (_, extra) => {
+        const toolContext = createToolContext(extra.authInfo);
         const info = {
           name: 'figma-tokens-mcp',
           version: '0.1.0',
@@ -135,5 +158,11 @@ const handler = createMcpHandler(
   }
 );
 
+// Wrap with authentication to get user's Figma token
+const authHandler = withMcpAuth(handler, verifyFigmaToken, {
+  required: true, // Figma token is required
+  requiredScopes: ['figma:read'], // Require read access
+});
+
 // Export for Next.js API routes
-export { handler as GET, handler as POST, handler as DELETE };
+export { authHandler as GET, authHandler as POST, authHandler as DELETE };
