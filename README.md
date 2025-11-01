@@ -74,24 +74,38 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that a
 
 ## Quick Start
 
-### 1. Get a Figma Access Token
-
-1. Log in to [Figma](https://www.figma.com/)
-2. Go to Settings → Account → Personal Access Tokens
-3. Click "Generate new token"
-4. Copy your token (you'll need it for configuration)
-
-[See detailed instructions in SETUP.md](docs/SETUP.md#figma-access-token-setup)
-
-### 2. Install via npx (Easiest)
+### ⚡ 원클릭 설치 (가장 쉬운 방법!)
 
 ```bash
-npx figma-tokens-mcp
+# 1. Smithery로 설치
+npx -y @smithery/cli@latest install @jhlee0409/figma-tokens-mcp --client claude
+
+# 2. 자동 설정 실행
+npx figma-tokens-setup
 ```
 
-### 3. Configure with Claude Desktop
+설치 스크립트가 자동으로:
+- ✅ Figma Access Token 입력 받기
+- ✅ Claude Desktop 설정 파일 자동 업데이트
+- ✅ 모든 환경 변수 자동 설정
 
-Add to your `claude_desktop_config.json`:
+### 📋 수동 설치 (선호하는 경우)
+
+<details>
+<summary>수동 설정 방법 보기</summary>
+
+#### 1. Figma Access Token 발급
+
+1. [Figma](https://www.figma.com/) 로그인
+2. Settings → Account → Personal Access Tokens
+3. "Generate new token" 클릭
+4. 토큰 복사
+
+[자세한 가이드 보기](docs/SETUP.md#figma-access-token-setup)
+
+#### 2. Claude Desktop 설정
+
+`claude_desktop_config.json`에 추가:
 
 ```json
 {
@@ -107,7 +121,11 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
-### 4. Start Using!
+#### 3. Claude Desktop 재시작
+
+</details>
+
+### 🚀 시작하기!
 
 In Claude Desktop, you can now:
 
