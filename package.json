@@ -26,14 +26,34 @@
   },
   "keywords": [
     "mcp",
+    "model-context-protocol",
     "figma",
+    "figma-api",
+    "figma-tokens",
+    "figma-variables",
     "design-tokens",
-    "tailwind",
     "design-system",
-    "model-context-protocol"
+    "tailwind",
+    "tailwindcss",
+    "tailwind-config",
+    "react",
+    "react-components",
+    "cva",
+    "typescript",
+    "ai",
+    "claude",
+    "code-generation"
   ],
-  "author": "",
+  "author": "jhlee0409",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jhlee0409/figma-tokens-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jhlee0409/figma-tokens-mcp/issues"
+  },
+  "homepage": "https://github.com/jhlee0409/figma-tokens-mcp#readme",
   "engines": {
     "node": ">=18.0.0"
   },
