@@ -77,17 +77,24 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that a
 ### ⚡ 원클릭 설치 (가장 쉬운 방법!)
 
 ```bash
+# Figma 토큰과 함께 한 번에 설치
+npx @jhlee0409/figma-tokens-mcp install --figma-token YOUR_FIGMA_TOKEN
+```
+
+**끝!** 이것만으로 모든 설정이 완료됩니다. ✨
+
+<details>
+<summary>대안: 2단계 설치 방법</summary>
+
+```bash
 # 1. Smithery로 설치
 npx -y @smithery/cli@latest install @jhlee0409/figma-tokens-mcp --client claude
 
-# 2. 자동 설정 실행
+# 2. Interactive 설정 실행
 npx figma-tokens-setup
 ```
 
-설치 스크립트가 자동으로:
-- ✅ Figma Access Token 입력 받기
-- ✅ Claude Desktop 설정 파일 자동 업데이트
-- ✅ 모든 환경 변수 자동 설정
+</details>
 
 ### 📋 수동 설치 (선호하는 경우)
 

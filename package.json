@@ -8,7 +8,8 @@
   "types": "dist/index.d.ts",
   "bin": {
     "figma-tokens-mcp": "dist/mcp/server.js",
-    "figma-tokens-setup": "scripts/setup.js"
+    "figma-tokens-setup": "scripts/setup.js",
+    "figma-tokens-install": "scripts/install.js"
   },
   "files": [
     "dist",
@@ -18,6 +19,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "setup": "node scripts/setup.js",
+    "install-mcp": "node scripts/install.js",
     "smithery:dev": "npx @smithery/cli dev",
     "smithery:build": "npx @smithery/cli build",
     "test": "vitest run",
