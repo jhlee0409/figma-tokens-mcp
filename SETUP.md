@@ -34,9 +34,22 @@
 빠르게 접근하려면 이 링크를 사용하세요:
 👉 https://www.figma.com/settings
 
-## 2단계: Claude Desktop 설정
+## 2단계: MCP 서버 설정
 
-### macOS 사용자
+### 방법 A: Claude Code (CLI 도구) - 가장 간단
+
+```bash
+# 한 줄로 자동 설정
+claude mcp add "figma-tokens" -- npx -y figma-tokens-mcp --figma-api-key=figd_YOUR_TOKEN --stdio
+```
+
+완료! 즉시 사용 가능합니다.
+
+---
+
+### 방법 B: Claude Desktop (앱) - 수동 설정
+
+#### macOS 사용자
 
 1. **설정 파일 열기**
    ```bash

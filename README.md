@@ -23,7 +23,7 @@ Figma 파일에서 디자인 토큰을 추출하고 Tailwind CSS 설정을 자�
 npx -y figma-tokens-mcp
 ```
 
-### Claude Desktop 설정
+### 설정
 
 #### 1. Figma Access Token 발급
 
@@ -37,7 +37,13 @@ npx -y figma-tokens-mcp
 
 > 📖 자세한 가이드: [SETUP.md](SETUP.md)
 
-#### 2. Claude Desktop 설정 파일 수정
+#### 2-A. Claude Code (CLI 도구)
+
+```bash
+claude mcp add "figma-tokens" -- npx -y figma-tokens-mcp --figma-api-key=YOUR_KEY --stdio
+```
+
+#### 2-B. Claude Desktop (앱) 설정 파일 수정
 
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
