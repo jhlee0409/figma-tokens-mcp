@@ -694,9 +694,31 @@ For more information, visit: https://github.com/jhlee0409/figma-tokens-mcp
 // Default export for Smithery CLI
 // Smithery CLI expects a function that takes { config } and returns a Server
 // DO NOT use createStatelessServer here - Smithery CLI handles HTTP transport
-export default function ({ config }: { config?: ServerConfig }) {
+export default function ({
+  config,
+  headers
+}: {
+  config?: ServerConfig;
+  headers?: Record<string, string>;
+}) {
+  // HTTP transport: Read token from Authorization: Bearer header (Smithery standard)
+  // stdio transport: Read from environment or config
+  let figmaToken: string | undefined;
+
+  // Extract token from Authorization: Bearer header
+  const authHeader = headers?.['authorization'] || headers?.['Authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    figmaToken = authHeader.substring(7); // Remove "Bearer " prefix
+  }
+
+  // Fallback to other sources
+  if (!figmaToken) {
+    figmaToken = config?.figmaAccessToken || process.env.FIGMA_ACCESS_TOKEN;
+  }
+
   const serverConfig: ServerConfig = {
     ...config,
+    ...(figmaToken ? { figmaAccessToken: figmaToken } : {}),
   };
 
   return createServer(serverConfig);

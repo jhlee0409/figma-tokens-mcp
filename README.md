@@ -86,7 +86,7 @@ npx @jhlee0409/figma-tokens-mcp install --figma-token YOUR_FIGMA_TOKEN
 claude mcp add figma-tokens-mcp \
   "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp" \
   --transport http \
-  --header "X-Figma-Token: YOUR_FIGMA_TOKEN"
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
 ```
 
 > 💡 HTTP transport는 팀 공유에 최적화되어 있으며, 별도 설정 없이 즉시 사용 가능합니다!

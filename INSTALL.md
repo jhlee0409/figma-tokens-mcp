@@ -16,17 +16,10 @@ npx @jhlee0409/figma-tokens-mcp install --figma-token YOUR_FIGMA_TOKEN
 claude mcp add figma-tokens-mcp \
   "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp" \
   --transport http \
-  --header "X-Figma-Token: YOUR_FIGMA_TOKEN"
+  --header "Authorization: Bearer YOUR_FIGMA_TOKEN"
 ```
 
-**또는 환경 변수 사용:**
-
-```bash
-claude mcp add figma-tokens-mcp \
-  "https://server.smithery.ai/@jhlee0409/figma-tokens-mcp/mcp" \
-  --transport http \
-  --env FIGMA_ACCESS_TOKEN=YOUR_FIGMA_TOKEN
-```
+> 💡 HTTP transport는 표준 `Authorization: Bearer` 헤더를 사용합니다.
 
 ### 방법 3: Smithery CLI + Interactive Setup
 
