@@ -116,9 +116,7 @@ describe('Security Validation', () => {
       ];
 
       for (const url of maliciousUrls) {
-        await expect(
-          extractTokens({ figmaFileUrl: url }, mockContext)
-        ).rejects.toThrow();
+        await expect(extractTokens({ figmaFileUrl: url }, mockContext)).rejects.toThrow();
       }
     });
 
@@ -148,9 +146,7 @@ describe('Security Validation', () => {
       ];
 
       for (const url of suspiciousUrls) {
-        await expect(
-          extractTokens({ figmaFileUrl: url }, mockContext)
-        ).rejects.toThrow();
+        await expect(extractTokens({ figmaFileUrl: url }, mockContext)).rejects.toThrow();
       }
     });
   });
@@ -177,7 +173,7 @@ describe('Security Validation', () => {
         );
 
         // Path should not be used directly - should be sanitized or rejected
-        result.files.forEach(file => {
+        result.files.forEach((file) => {
           expect(file.path).not.toContain('..');
           expect(file.path).not.toMatch(/^[A-Z]:\\/); // Windows absolute path
           expect(file.path).not.toMatch(/^\/etc/); // Unix absolute path
@@ -301,7 +297,7 @@ describe('Security Validation', () => {
       // NOTE: Current implementation doesn't sanitize names yet
       // This test documents expected behavior for future implementation
       // For now, we verify that malicious token names are at least included in CSS comments or sanitized areas
-      result.files.forEach(file => {
+      result.files.forEach((file) => {
         // CSS variable names will contain the raw names, but they should be in a safe context
         // Future: implement proper CSS identifier sanitization
         expect(file.content).toBeDefined();
@@ -333,10 +329,7 @@ describe('Security Validation', () => {
 
   describe('Resource Limits', () => {
     it('should handle large file URLs gracefully', async () => {
-      const longUrl =
-        'https://www.figma.com/file/' +
-        'a'.repeat(10000) +
-        '/test';
+      const longUrl = 'https://www.figma.com/file/' + 'a'.repeat(10000) + '/test';
 
       try {
         await extractTokens({ figmaFileUrl: longUrl }, mockContext);

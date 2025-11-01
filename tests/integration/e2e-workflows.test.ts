@@ -12,8 +12,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { extractTokens, convertToTailwind, generateComponent } from '../../src/mcp/tools';
 import type { ToolContext } from '../../src/mcp/types';
 import { FigmaAPIClient } from '../../src/core/extractors/figma-api';
-import { createVariablesExtractor } from '../../src/core/extractors/variables-extractor';
-import { StylesExtractor } from '../../src/core/extractors/styles-extractor';
 
 // Mock only the Figma API client to avoid actual API calls
 vi.mock('../../src/core/extractors/figma-api');
@@ -385,7 +383,7 @@ describe('E2E Workflows', () => {
       expect(result.statistics.styleTokens).toBeGreaterThan(0);
 
       // Should have conflict warnings
-      const conflictWarnings = result.warnings.filter(w => w.type === 'conflict');
+      const conflictWarnings = result.warnings.filter((w) => w.type === 'conflict');
       expect(conflictWarnings.length).toBeGreaterThan(0);
     });
 
