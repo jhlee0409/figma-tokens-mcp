@@ -33,10 +33,17 @@ import {
 import { createErrorResponse } from '../utils/mcp-errors.js';
 import { Logger, LogLevel } from '../utils/logger.js';
 import { fileURLToPath } from 'url';
-import { realpathSync } from 'fs';
+import { realpathSync, readFileSync } from 'fs';
+import { dirname, join } from 'path';
 
 const SERVER_NAME = 'figma-tokens-mcp';
-const SERVER_VERSION = '0.1.0';
+
+// Read version from package.json
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJsonPath = join(__dirname, '../../package.json');
+const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+const SERVER_VERSION = packageJson.version;
 
 /**
  * Creates and configures the MCP server
