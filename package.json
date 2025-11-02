@@ -1,6 +1,6 @@
 {
   "name": "figma-tokens-mcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Model Context Protocol (MCP) server for extracting design tokens from Figma and generating Tailwind CSS configurations",
   "type": "module",
   "main": "dist/index.js",
