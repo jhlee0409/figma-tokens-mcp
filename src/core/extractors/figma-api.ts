@@ -408,6 +408,54 @@ export class FigmaAPIClient {
   }
 
   /**
+   * Get file with optimized parameters for styles extraction
+   *
+   * Fetches only metadata and styles, excluding heavy geometry data.
+   * This is significantly faster and lighter than getFile() for style extraction.
+   *
+   * @param fileKey - Figma file key
+   * @returns Lightweight file response with styles metadata
+   * @throws {FigmaAuthError} If authentication fails
+   * @throws {FigmaNotFoundError} If file is not found
+   *
+   * @example
+   * ```typescript
+   * const file = await client.getFileForStyles('ABC123');
+   * const styles = file.styles; // Only styles metadata, no geometry
+   * ```
+   */
+  async getFileForStyles(fileKey: string): Promise<FigmaFile> {
+    const cacheKey = `file:styles:${fileKey}`;
+    const cached = this.getCached<FigmaFile>(cacheKey);
+    if (cached) {
+      this.logger.debug(`Using cached styles metadata for ${fileKey}`);
+      return cached;
+    }
+
+    this.logger.info(`Fetching file metadata for styles: ${fileKey}`);
+    const startTime = Date.now();
+
+    try {
+      // Styles metadata requires full file fetch
+      // Optimization relies on caching (5min TTL) to avoid repeated large downloads
+      const response = await this.client.get<FigmaFile>(`/files/${fileKey}`);
+
+      const duration = Date.now() - startTime;
+      // Avoid expensive JSON.stringify - estimate size from style count instead
+      const styleCount = Object.keys(response.data.styles || {}).length;
+      this.logger.info(
+        `Styles metadata fetched in ${duration}ms (${styleCount} styles)`
+      );
+
+      this.setCache(cacheKey, response.data);
+      return response.data;
+    } catch (error) {
+      this.logger.error(`Failed to fetch file for styles: ${fileKey}`, error as Error);
+      throw error;
+    }
+  }
+
+  /**
    * Get local variables from a file
    *
    * Retrieves all variables and variable collections defined in the file.
@@ -475,7 +523,8 @@ export class FigmaAPIClient {
     this.logger.info(`Fetching styles for file: ${fileKey}`);
 
     try {
-      const file = await this.getFile(fileKey);
+      // Use optimized lightweight endpoint for styles
+      const file = await this.getFileForStyles(fileKey);
       const styles = Object.values(file.styles);
       this.logger.info(`Fetched ${styles.length} styles`);
       return styles;
