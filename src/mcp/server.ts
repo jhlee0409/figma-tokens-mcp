@@ -72,6 +72,11 @@ export function createServer(config: ServerConfig = {}): Server {
     },
   };
 
+  // Debug: Log token configuration
+  logger.info(
+    `Figma token configured: ${toolContext.figmaAccessToken ? 'Yes (length: ' + toolContext.figmaAccessToken.length + ')' : 'No'}`
+  );
+
   // List available resources
   server.setRequestHandler(ListResourcesRequestSchema, () => {
     return {
